@@ -14,11 +14,13 @@ import SocialConnect from "./pages/SocialConnect";
 import Accessibility from "./pages/Accessibility";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import DarkModeWrapper from "./DarkModeWrapper";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
+  <DarkModeWrapper>
+<QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -36,6 +38,10 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+
+  </DarkModeWrapper>
+  );
 
 export default App;
+
+
