@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom"; // ✅ Import Link for navigation
+import { Link } from "react-router-dom"; 
 import { CheckCircle } from "lucide-react";
+import Sidebar from '../components/Sidebar'; 
 
 const Newsletter = () => {
   const [formData, setFormData] = useState({
@@ -31,34 +32,9 @@ const Newsletter = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white p-6 shadow-lg">
-        <h1 className="text-2xl font-semibold text-blue-600 mb-6">TravelHub</h1>
-        <nav className="space-y-4">
-          <Link to="/" className="block text-gray-700 hover:text-blue-600">
-            Dashboard
-          </Link>
-          <Link to="/expenses" className="block text-gray-700 hover:text-blue-600">
-            Expenses
-          </Link>
-          <Link to="/newsletter" className="block text-blue-600 font-semibold">
-            Newsletter
-          </Link>
-          <Link to="/social-connect" className="block text-gray-700 hover:text-blue-600">
-            Social Connect
-          </Link>
-          <Link to="/safe-places" className="block text-gray-700 hover:text-blue-600">
-            Safe Places
-          </Link>
-          <Link to="/profile" className="block text-gray-700 hover:text-blue-600">
-            Profile
-          </Link>
-          <Link to="/settings" className="block text-gray-700 hover:text-blue-600">
-            Settings
-          </Link>
-        </nav>
-      </aside>
-
+      {/* Use the main Sidebar component */}
+      <Sidebar />
+      
       {/* Main Content */}
       <main className="flex-1 p-8">
         <h2 className="text-2xl font-bold mb-4">Newsletter Subscription</h2>
@@ -139,7 +115,7 @@ const Newsletter = () => {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+              className="w-full bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-700"
             >
               Subscribe Now
             </button>
