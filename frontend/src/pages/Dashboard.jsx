@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Menu, Waves, Mountain, Search, SlidersHorizontal } from "lucide-react";
+import axios from 'axios';
 
 import Sidebar from "../components/Sidebar";
 import MoodCard from "../components/MoodCard";
@@ -11,6 +12,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMood, setSelectedMood] = useState(null);
+  const [movies, setMovies] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const moodCategories = [
@@ -37,9 +39,51 @@ const Dashboard = () => {
     },
   ];
 
-  const handleMoodClick = (mood) => {
+
+  const moodToGenre = {
+    Relax: 'Drama',
+    Party: 'Music',
+    Adventure: 'Action',
+    Romance: 'Romantic Comedy',
+    Happy: 'Animation,Comedy,Family',
+    Calming: 'Drama',
+  };
+
+  const fetchMoviesByMood = async (mood) => {
+    const genre = moodToGenre[mood];
+    const apiKey = 'f688c63d';
+    const currentYear = new Date().getFullYear();
+    const fiveYearsAgo = currentYear - 5;
+
+    try {
+      console.log(`Fetching movies for mood: ${mood}, genre: ${genre}`); //**NEW**
+      const apiUrl = `http://www.omdbapi.com/?s=${genre}&apikey=${apiKey}&type=movie`;
+      console.log(`API URL: ${apiUrl}`); // **NEW**
+
+      const response = await axios.get(apiUrl);
+      console.log(`Full API Response:`, response);  // **NEW - VERY IMPORTANT**
+      console.log(`API Response data:`, response.data); //**NEW**
+
+
+      const filteredMovies = response.data.Search ? response.data.Search.filter(movie => {
+          const movieYear = parseInt(movie.Year);
+          return movieYear >= fiveYearsAgo && movieYear <= currentYear;
+      }) : [];
+
+      console.log(`Filtered Movies:`, filteredMovies); // **NEW**
+
+      return filteredMovies || [];
+    } catch (error) {
+      console.error('Error fetching movies:', error);
+      return [];
+    }
+  };
+
+  const handleMoodClick = async (mood) => {
     setSelectedMood(mood);
     toast.success(`Selected Mood: ${mood}`);
+    const fetchedMovies = await fetchMoviesByMood(mood);
+    setMovies(fetchedMovies);
   };
 
   const handleNavigation = (route) => {
@@ -109,21 +153,48 @@ const Dashboard = () => {
         </div>
 
         {/* Mood Section */}
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-2">How do you feel today?</h2>
-          <p className="text-sm text-gray-600 mb-4">Select your mood to get personalized recommendations!</p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {moodCategories.map((category, index) => (
-              <button
-                key={index}
-                onClick={() => handleMoodClick(category.title)}
-                className="transition-transform transform hover:scale-105"
-              >
-                <MoodCard {...category} />
-              </button>
-            ))}
-          </div>
-        </section>
+        {selectedMood === null && (
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold mb-2">How do you feel today?</h2>
+            <p className="text-sm text-gray-600 mb-4">Select your mood to get personalized recommendations!</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {moodCategories.map((category, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleMoodClick(category.title)}
+                  className="transition-transform transform hover:scale-105"
+                >
+                  <MoodCard {...category} />
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Movie Recommendations */}
+        {selectedMood !== null && (
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold mb-2">Enjoy your travel with these</h2>
+             <div className="flex overflow-x-auto gap-4 py-2">
+              {movies.slice(0, 5).map((movie) => (
+                <div
+                  key={movie.imdbID}
+                  className="bg-white rounded-lg shadow-md flex-none w-48 md:w-64"
+                >
+                  <img
+                    src={movie.Poster}
+                    alt={movie.Title}
+                    className="h-32 w-full object-cover rounded-t-lg"
+                  />
+                  <div className="p-2">
+                    <h3 className="font-medium text-sm truncate">{movie.Title}</h3>
+                    <p className="text-xs text-gray-600">{movie.Year}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Destinations */}
         <section className="bg-white rounded-xl shadow p-6 mb-6">
@@ -139,9 +210,7 @@ const Dashboard = () => {
               </button>
             ))}
           </div>
-        </section>
-
-        {/* Additional Sections */}
+        </section>... {/* Additional Sections */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
             { title: "Expense Tracker", description: "Track and manage your travel expenses", route: "/expenses" },
