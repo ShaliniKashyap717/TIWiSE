@@ -1,31 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Pie, Bar, Line, Doughnut, PolarArea } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
-  CategoryScale,
-  RadialLinearScale,
-  LinearScale,
-  BarElement,
-  Title,
+  ArcElement,
   Tooltip,
   Legend,
-  ArcElement,
-  LineElement,
-  PointElement,
+  Title
 } from "chart.js";
 
 ChartJS.register(
-  RadialLinearScale,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
   ArcElement,
-  Title,
   Tooltip,
-  Legend
+  Legend,
+  Title
 );
 
 const AMADEUS_BASE_URL = "https://test.api.amadeus.com";
@@ -44,7 +32,6 @@ const HotelChart = () => {
   const [hotels, setHotels] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [chartType, setChartType] = useState("Pie");
   const [selectedCity, setSelectedCity] = useState(cities[0].code);
 
   const getAccessToken = async () => {
@@ -106,25 +93,14 @@ const HotelChart = () => {
       {
         label: "Hotel Rating",
         data: hotels.map((hotel) => hotel.rating),
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40", "#C9CBCF", "#FF6384", "#36A2EB", "#FFCE56"],
+        backgroundColor: [
+          "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", 
+          "#9966FF", "#FF9F40", "#8AC24A", "#FF5722", 
+          "#607D8B", "#9C27B0"
+        ],
         borderWidth: 1,
       },
     ],
-  };
-
-  const renderChart = () => {
-    switch (chartType) {
-      case "Bar":
-        return <Bar data={chartData} />;
-      case "Line":
-        return <Line data={chartData} />;
-      case "Doughnut":
-        return <Doughnut data={chartData} />;
-      case "PolarArea":
-        return <PolarArea data={chartData} />;
-      default:
-        return <Pie data={chartData} />;
-    }
   };
 
   return (
@@ -133,28 +109,25 @@ const HotelChart = () => {
         Top 10 Hotels by Rating
       </h2>
 
-      <div className="flex justify-center gap-4 mb-6">
-        <select
-          className="border border-gray-300 rounded-lg p-2 text-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          value={selectedCity}
-          onChange={(e) => setSelectedCity(e.target.value)}
-        >
-          {cities.map((city) => (
-            <option key={city.code} value={city.code}>{city.name}</option>
-          ))}
-        </select>
-
-        <select
-          className="border border-gray-300 rounded-lg p-2 text-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          value={chartType}
-          onChange={(e) => setChartType(e.target.value)}
-        >
-          <option value="Pie">Pie Chart</option>
-          <option value="Bar">Bar Chart</option>
-          <option value="Line">Line Chart</option>
-          <option value="Doughnut">Doughnut Chart</option>
-          <option value="PolarArea">Polar Area Chart</option>
-        </select>
+      <div className="flex justify-center mb-6">
+        <div className="w-full max-w-xs">
+          <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+            Select City:
+          </label>
+          <select
+            id="city"
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            disabled={loading}
+          >
+            {cities.map((city) => (
+              <option key={city.code} value={city.code}>
+                {city.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="w-full h-[400px] flex justify-center items-center">
@@ -163,7 +136,23 @@ const HotelChart = () => {
         ) : error ? (
           <p className="text-red-600">{error}</p>
         ) : (
-          renderChart()
+          <Doughnut 
+            data={chartData}
+            options={{
+              plugins: {
+                title: {
+                  display: true,
+                  text: `Top Hotels in ${cities.find(c => c.code === selectedCity)?.name || ''}`,
+                  font: { size: 16 }
+                },
+                legend: { 
+                  position: 'bottom',
+                  labels: { font: { size: 12 } }
+                }
+              },
+              maintainAspectRatio: false
+            }}
+          />
         )}
       </div>
     </div>

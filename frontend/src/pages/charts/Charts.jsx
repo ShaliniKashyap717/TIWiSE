@@ -5,7 +5,11 @@ import PlaceChart from "./PlaceChart";
 
 const Chart = ({ type = "" }) => {
   if (!type) {
-    return <p className="text-center text-gray-600">Please select a valid chart type.</p>;
+    return (
+      <div className="h-full flex items-center justify-center">
+        <p className="text-gray-600">Please select a valid chart type.</p>
+      </div>
+    );
   }
 
   let ComponentToRender;
@@ -19,14 +23,16 @@ const Chart = ({ type = "" }) => {
   } else if (typeLower.includes("place")) {
     ComponentToRender = PlaceChart;
   } else {
-    return <p className="text-center text-red-600">Invalid chart type provided.</p>;
+    return (
+      <div className="h-full flex items-center justify-center">
+        <p className="text-red-600">Invalid chart type provided.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="w-full bg-white rounded-lg shadow-md p-4">
-      <div className="flex justify-center">
-        <ComponentToRender />
-      </div>
+    <div className="h-full w-full"> {/* Takes full height of parent */}
+      <ComponentToRender />
     </div>
   );
 };
