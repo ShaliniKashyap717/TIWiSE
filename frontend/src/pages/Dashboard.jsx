@@ -16,13 +16,13 @@ const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const moodCategories = [
-    { icon: <Waves className="text-teal-500" size={20} />, title: "Relax", color: "bg-teal-100" },
     { icon: <Waves className="text-teal-500" size={20} />, title: "Party", color: "bg-teal-100" },
     { icon: <Mountain className="text-teal-500" size={20} />, title: "Adventure", color: "bg-teal-100" },
     { icon: <Waves className="text-teal-500" size={20} />, title: "Romance", color: "bg-teal-100" },
     { icon: <Waves className="text-teal-500" size={20} />, title: "Happy", color: "bg-teal-100" },
     { icon: <Waves className="text-teal-500" size={20} />, title: "Calming", color: "bg-teal-100" },
   ];
+  
 
   const destinations = [
     {
@@ -156,18 +156,18 @@ const Dashboard = () => {
         {selectedMood === null && (
           <section className="mb-8">
             <h2 className="text-xl font-semibold mb-2">How do you feel today?</h2>
-            <p className="text-sm text-gray-600 mb-4">Select your mood to get personalized recommendations!</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {moodCategories.map((category, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleMoodClick(category.title)}
-                  className="transition-transform transform hover:scale-105"
-                >
-                  <MoodCard {...category} />
-                </button>
-              ))}
-            </div>
+            <div className="grid grid-cols-5 gap-4">
+  {moodCategories.map((category, index) => (
+    <button
+      key={index}
+      onClick={() => handleMoodClick(category.title)}
+      className="w-full h-24 transition-transform transform hover:scale-105"
+    >
+      <MoodCard {...category} />
+    </button>
+  ))}
+</div>
+
           </section>
         )}
 
