@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Menu, Waves, Mountain, Search, SlidersHorizontal } from "lucide-react";
-
 import Sidebar from "../components/Sidebar";
 import MoodCard from "../components/MoodCard";
 import DestinationCard from "../components/DestinationCard";
-
+import Chart from "./charts/Charts";
 const Dashboard = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedMood, setSelectedMood] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [summarySection, setSummarySection]=useState('Most Liked Hotel')
 
   const moodCategories = [
     { icon: <Waves className="text-teal-500" size={20} />, title: "Relax", color: "bg-teal-100" },
@@ -37,6 +37,23 @@ const Dashboard = () => {
     },
   ];
 
+  const AnalyticsCategory=[
+    {
+      index: 1,
+      title: "Most Visited Places"
+    },
+    {
+      index: 2,
+      title: "Most Liked Movies"
+    },
+    {
+    index: 3,
+    title: "Most Rated Hotels"
+    }
+
+    
+  ]
+
   const handleMoodClick = (mood) => {
     setSelectedMood(mood);
     toast.success(`Selected Mood: ${mood}`);
@@ -45,6 +62,10 @@ const Dashboard = () => {
   const handleNavigation = (route) => {
     navigate(route);
   };
+
+  const handleSummarySectionChange = (e)=>{
+    setSummarySection(e.target.value)
+  }
 
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-gray-50 relative">
@@ -107,6 +128,38 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+       
+        {/* Graph Section*/}
+
+        <section className=" mb-8">
+  
+        <h2 className="text-xl font-semibold mb-2">Select Category to See the summary</h2>
+    
+    {/* Dropdown */}
+    <select
+      className="border border-gray-300 rounded-lg px-1 py-1 text-gray-700 w-1/2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      value={summarySection}
+      onChange={handleSummarySectionChange}
+    >
+      <option value={summarySection} disabled>{summarySection}</option>
+      {AnalyticsCategory.map((category, index) => (
+        <option key={index} value={category.title}>
+          {category.title}
+        </option>
+      ))}
+    </select>
+
+    {/* Graph Container */}
+    <div className="mt-1 flex justify-items-start">
+      <div className="w-full max-w-2xl">
+        <Chart type={summarySection}/>
+      </div>
+    </div>
+  
+</section>
+
+      
+
 
         {/* Mood Section */}
         <section className="mb-8">
@@ -125,6 +178,7 @@ const Dashboard = () => {
           </div>
         </section>
 
+       
         {/* Destinations */}
         <section className="bg-white rounded-xl shadow p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4">Most Visited Places</h2>
