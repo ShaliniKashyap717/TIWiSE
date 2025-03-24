@@ -60,9 +60,7 @@ const Dashboard = () => {
     
   ]
 
-  const handleMoodClick = (mood) => {
-
-
+  
   const moodToGenre = {
     Relax: 'Drama',
     Party: 'Music',
@@ -121,6 +119,8 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-gray-50 relative">
       {/* Sidebar Toggle Button */}
+
+      
       <button
         className="lg:hidden fixed top-4 left-4 bg-white p-2 rounded-full shadow-md z-50"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -292,7 +292,6 @@ const Dashboard = () => {
       </main>
     </div>
   );
-}
 };
 
 export default Dashboard;
