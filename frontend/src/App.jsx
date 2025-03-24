@@ -10,12 +10,15 @@ import Accessibility from "./pages/Accessibility";
 import Settings from "./pages/Settings";
 import Newsletter from "./pages/Newsletter"; // ✅ Added Newsletter route
 import NotFound from "./pages/NotFound";
+import Home from "./pages/Home";
 
 const App = () => (
   <Router>
     <Toaster position="top-right" />
     <Routes>
-      <Route path="/" element={<Dashboard />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/" element={<Home/>} />
+    
       <Route path="/profile" element={<Profile />} />
       <Route path="/expenses" element={<Expenses />} />
       <Route path="/safe-places" element={<SafePlaces />} />

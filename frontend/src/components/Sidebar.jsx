@@ -2,11 +2,11 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   Home, 
+  LayoutDashboard,
   DollarSign, 
   Users, 
   Accessibility, 
   Shield, 
-  Settings,
   LogOut
 } from 'lucide-react';
 
@@ -16,7 +16,7 @@ const Sidebar = () => {
       <div className="p-6">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center">
-            <span className="text-white font-bold">T</span>
+            <span className="text-white font-bold">W</span>
           </div>
           <h1 className="text-xl font-bold text-gray-800">WanderWise</h1>
         </div>
@@ -25,6 +25,11 @@ const Sidebar = () => {
       <nav className="flex-1 px-3 py-4">
         <NavLink to="/" className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''}`}>
           <Home size={20} />
+          <span>Home</span>
+        </NavLink>
+
+        <NavLink to="/dashboard" className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''} mt-2`}>
+          <LayoutDashboard size={20} />
           <span>Dashboard</span>
         </NavLink>
         
@@ -54,11 +59,6 @@ const Sidebar = () => {
         <NavLink to="/safe-places" className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''} mt-2`}>
           <Shield size={20} />
           <span>Safe Places</span>
-        </NavLink>
-        
-        <NavLink to="/settings" className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''} mt-2`}>
-          <Settings size={20} />
-          <span>Settings</span>
         </NavLink>
       </nav>
       
