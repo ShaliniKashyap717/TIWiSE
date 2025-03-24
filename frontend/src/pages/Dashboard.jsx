@@ -70,9 +70,7 @@ const Dashboard = () => {
     };
   }, [searchTerm, debouncedFetchPlaces]);
 
-  const handleMoodClick = (mood) => {
-
-
+  
   const moodToGenre = {
     Relax: 'Drama',
     Party: 'Music',
@@ -255,7 +253,6 @@ const Dashboard = () => {
       </main>
     </div>
   );
-}
 };
 
 export default Dashboard;
