@@ -1,8 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "./components/ui/sonner";
-
-import Dashboard from "./pages/Dashboard";
+import Dashboard from './pages/Dashboard'
 import Profile from "./pages/Profile";
 import Expenses from "./pages/Expenses";
 import SafePlaces from "./pages/SafePlaces";
