@@ -12,8 +12,8 @@ import Chart from "./charts/Charts";
 const Dashboard = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [displayTerm, setDisplayTerm] = useState(""); // For display purposes
   const [selectedMood, setSelectedMood] = useState(null);
+  const [movies, setMovies] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [summarySection, setSummarySection] = useState('Most Visited Places');
 
@@ -86,15 +86,15 @@ const Dashboard = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
             <input
               type="text"
-              placeholder="Enter location to find most visited places..."
+              placeholder="Search destinations, restaurants, places..."
               className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-teal-300"
               value={searchTerm}
-              onChange={handleSearchChange}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="bg-teal-500 text-white flex items-center gap-2 px-4 py-2 rounded-md">
+            <button className="btn-teal flex items-center gap-2 px-4 py-2 rounded-md">
               <SlidersHorizontal size={16} />
               <span>Filters</span>
             </button>
