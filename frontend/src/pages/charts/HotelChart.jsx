@@ -1,25 +1,38 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Pie, Bar, Line, Doughnut, PolarArea } from "react-chartjs-2";
-import { 
-  Chart as ChartJS, CategoryScale, RadialLinearScale, LinearScale, 
-  BarElement, Title, Tooltip, Legend, ArcElement, LineElement, PointElement 
+import { Doughnut } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  Title
 } from "chart.js";
 
-
 ChartJS.register(
-  RadialLinearScale, CategoryScale, LinearScale, PointElement, LineElement, 
-  BarElement, ArcElement, Title, Tooltip, Legend
+  ArcElement,
+  Tooltip,
+  Legend,
+  Title
 );
 
-const AMADEUS_BASE_URL = "https://test.api.amadeus.com"; 
-const CLIENT_ID = "XxacBK7b75Du0C0jgQz7GiLR5jG7CVRG"; 
-const CLIENT_SECRET = "RbrKuPBdDWBYL0ue"; 
+const AMADEUS_BASE_URL = "https://test.api.amadeus.com";
+const CLIENT_ID = "XxacBK7b75Du0C0jgQz7GiLR5jG7CVRG";
+const CLIENT_SECRET = "RbrKuPBdDWBYL0ue";
+
+const cities = [
+  { code: "NYC", name: "New York" },
+  { code: "LON", name: "London" },
+  { code: "PAR", name: "Paris" },
+  { code: "BKK", name: "Bangkok" },
+  { code: "TOK", name: "Tokyo" },
+];
+
 const HotelChart = () => {
   const [hotels, setHotels] = useState([]);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [chartType, setChartType] = useState("Pie"); // Chart type selector
+  const [loading, setLoading] = useState(false);
+  const [selectedCity, setSelectedCity] = useState(cities[0].code);
 
   const getAccessToken = async () => {
     try {
@@ -28,7 +41,6 @@ const HotelChart = () => {
         `grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`,
         { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
       );
-
       return response.data.access_token;
     } catch (err) {
       console.error("Token Error:", err.response ? err.response.data : err.message);
@@ -37,46 +49,43 @@ const HotelChart = () => {
     }
   };
 
-  // Fetch hotel data from Amadeus API
+  const fetchHotels = async (cityCode) => {
+    setLoading(true);
+    setError("");
+    setHotels([]);
+    
+    const accessToken = await getAccessToken();
+    if (!accessToken) return;
+    
+    try {
+      const response = await axios.get(
+        `${AMADEUS_BASE_URL}/v1/reference-data/locations/hotels/by-city`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          params: { cityCode },
+        }
+      );
+
+      const hotelData = response.data.data
+        .map((hotel) => ({
+          name: hotel.name,
+          rating: hotel.rating || Math.random() * 5,
+        }))
+        .sort((a, b) => b.rating - a.rating)
+        .slice(0, 10);
+
+      setHotels(hotelData);
+    } catch (err) {
+      console.error("Hotel Fetch Error:", err.response ? err.response.data : err.message);
+      setError("Failed to fetch hotel data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchHotels = async () => {
-      setLoading(true);
-      setError("");
-
-      const accessToken = await getAccessToken();
-      if (!accessToken) return;
-
-      try {
-        const response = await axios.get(
-          `${AMADEUS_BASE_URL}/v1/reference-data/locations/hotels/by-city`,
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-            params: { cityCode: "NYC" }, 
-          }
-        );
-
-        //extracting data
-        const hotelData = response.data.data
-          .map((hotel) => ({
-            name: hotel.name,
-            rating: hotel.rating || Math.random() * 5,
-          }))
-          .sort((a, b) => b.rating - a.rating) 
-          .slice(0, 10);
-        setHotels(hotelData);
-      } catch (err) {
-        console.error("Hotel Fetch Error:", err.response ? err.response.data : err.message);
-        setError("Failed to fetch hotel data. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHotels();
-  }, []);
-
-  if (loading) return <p className="text-center text-gray-700">Loading...</p>;
-  if (error) return <p className="text-center text-red-600">{error}</p>;
+    fetchHotels(selectedCity);
+  }, [selectedCity]);
 
   const chartData = {
     labels: hotels.map((hotel) => hotel.name),
@@ -85,53 +94,66 @@ const HotelChart = () => {
         label: "Hotel Rating",
         data: hotels.map((hotel) => hotel.rating),
         backgroundColor: [
-          "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", 
-          "#FF9F40", "#C9CBCF", "#FF6384", "#36A2EB", "#FFCE56"
+          "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", 
+          "#9966FF", "#FF9F40", "#8AC24A", "#FF5722", 
+          "#607D8B", "#9C27B0"
         ],
         borderWidth: 1,
       },
     ],
   };
 
- 
-  const renderChart = () => {
-    switch (chartType) {
-      case "Bar":
-        return <Bar data={chartData} />;
-      case "Line":
-        return <Line data={chartData} />;
-      case "Doughnut":
-        return <Doughnut data={chartData} />;
-      case "PolarArea":
-        return <PolarArea data={chartData} />;
-      default:
-        return <Pie data={chartData} />;
-    }
-  };
-
   return (
-    <div className="w-full h-full flex flex-col items-center bg-white shadow-lg p-2 rounded-lg">
-      {/* Title */}
-      <h6 className="text-2xl font-bold text-gray-800 mb-4 text-center">
-        Top 10 Most Liked Hotels
-      </h6>
+    <div className="w-full bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+        Top 10 Hotels by Rating
+      </h2>
 
-      
-      <select 
-        className="mb-2 border border-gray-300 rounded-lg p-2 text-gray-700 w-2/3"
-        value={chartType} 
-        onChange={(e) => setChartType(e.target.value)}
-      >
-        <option value="Pie">Pie Chart</option>
-        <option value="Bar">Bar Chart</option>
-        <option value="Line">Line Chart</option>
-        <option value="Doughnut">Doughnut Chart</option>
-        <option value="PolarArea">Polar Area Chart</option>
-      </select>
+      <div className="flex justify-center mb-6">
+        <div className="w-full max-w-xs">
+          <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+            Select City:
+          </label>
+          <select
+            id="city"
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            disabled={loading}
+          >
+            {cities.map((city) => (
+              <option key={city.code} value={city.code}>
+                {city.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-     
-      <div className="w-full max-w-4xl h-[450px] flex justify-center items-center">
-        {renderChart()}
+      <div className="w-full h-[400px] flex justify-center items-center">
+        {loading ? (
+          <p className="text-gray-600">Loading chart...</p>
+        ) : error ? (
+          <p className="text-red-600">{error}</p>
+        ) : (
+          <Doughnut 
+            data={chartData}
+            options={{
+              plugins: {
+                title: {
+                  display: true,
+                  text: `Top Hotels in ${cities.find(c => c.code === selectedCity)?.name || ''}`,
+                  font: { size: 16 }
+                },
+                legend: { 
+                  position: 'bottom',
+                  labels: { font: { size: 12 } }
+                }
+              },
+              maintainAspectRatio: false
+            }}
+          />
+        )}
       </div>
     </div>
   );

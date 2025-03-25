@@ -15,6 +15,7 @@ import Accessibility from "./pages/Accessibility";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import DarkModeWrapper from "./DarkModeWrapper";
+import Home from "./pages/Home";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +27,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Home/>} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/safe-places" element={<SafePlaces />} />

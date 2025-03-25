@@ -1,8 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "./components/ui/sonner";
-
-import Dashboard from "./pages/Dashboard";
+import Dashboard from './pages/Dashboard'
 import Profile from "./pages/Profile";
 import Expenses from "./pages/Expenses";
 import SafePlaces from "./pages/SafePlaces";
@@ -11,12 +10,15 @@ import Accessibility from "./pages/Accessibility";
 import Settings from "./pages/Settings";
 import Newsletter from "./pages/Newsletter"; // ✅ Added Newsletter route
 import NotFound from "./pages/NotFound";
+import Home from "./pages/Home";
 
 const App = () => (
   <Router>
     <Toaster position="top-right" />
     <Routes>
-      <Route path="/" element={<Dashboard />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/" element={<Home/>} />
+    
       <Route path="/profile" element={<Profile />} />
       <Route path="/expenses" element={<Expenses />} />
       <Route path="/safe-places" element={<SafePlaces />} />
