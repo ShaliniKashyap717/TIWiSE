@@ -4,6 +4,7 @@ import './Home.css';
 import Hero from '../components/Hero';
 import Feature from '../components/Feature';
 import SearchForm from '../components/SearchForm';
+import ProfileDropdown from "../components/ProfileDropdown";
 
 const Home = () => {
  
