@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { handleError, handleSuccess } from '../lib/utils'; // ✅ handleSuccess ko bhi import karna zaroori hai
-
+import { handleError, handleSuccess } from '../lib/utils'; 
 function Login() {
     const [loginInfo, setloginInfo] = useState({
-       
         email: '',
         password: '',
     });
@@ -21,8 +19,8 @@ function Login() {
         e.preventDefault();
         const { email, password } = loginInfo;
 
-        if ( !email || !password) {
-            return handleError(' email, and password are required');
+        if (!email || !password) {
+            return handleError('Email and password are required');
         }
 
         try {
@@ -34,8 +32,8 @@ function Login() {
             });
 
             const result = await response.json();
-            console.log("Response:", result); // Debugging ke liye
-            const {success, message,jwtToken,name, error}=result; 
+            console.log("Response:", result);
+            const { success, message, jwtToken, name, error } = result;
 
             if (response.status === 409) {
                 return handleError("User already exists. Please login.");
@@ -43,18 +41,15 @@ function Login() {
 
             if (response.ok && result.success) {
                 handleSuccess(result.message);
-                localStorage.setItem('token',jwtToken);
-                localStorage.setItem('loggedInUser',name);
+                localStorage.setItem('token', jwtToken);
+                localStorage.setItem('loggedInUser', name);
                 setTimeout(() => navigate('/home'), 1000);
-            } else if(error){
-                const details=error?.details[0].message;
+            } else if (error) {
+                const details = error?.details[0].message;
                 handleError(details);
-                
-            }
-            else if(!success){
+            } else if (!success) {
                 handleError(message);
-            }
-            else {
+            } else {
                 handleError(result.message || "Signup failed, please try again.");
             }
         } catch (err) {
@@ -65,43 +60,40 @@ function Login() {
 
     return (
         <div className="min-h-screen flex justify-center items-center bg-gray-100 py-10">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-                <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
-                <form className="space-y-4" onSubmit={handleLogin}>
-                    
-                    <div>
-                        <label htmlFor="email" className="block text-gray-700 font-medium">
-                            Email
-                        </label>
+            <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+                <h1 className="text-2xl font-bold text-center mb-5">Login</h1>
+                <form className="flex flex-col gap-4 w-full" onSubmit={handleLogin}>
+                    <div className="flex flex-col">
+                        <label htmlFor="email" className="text-lg font-medium mb-1">Email</label>
                         <input
                             onChange={handleChange}
                             type="email"
                             name="email"
                             placeholder="Enter your email..."
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
+                            className="text-lg p-2 outline-none border border-gray-300 rounded-md placeholder:text-gray-500 placeholder:italic focus:ring-2 focus:ring-teal-600"
                             value={loginInfo.email}
                         />
                     </div>
-                    <div>
-                        <label htmlFor="password" className="block text-gray-700 font-medium">
-                            Password
-                        </label>
+
+                    <div className="flex flex-col">
+                        <label htmlFor="password" className="text-lg font-medium mb-1">Password</label>
                         <input
                             onChange={handleChange}
                             type="password"
                             name="password"
                             placeholder="Enter your password..."
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
+                            className="text-lg p-2 outline-none border border-gray-300 rounded-md placeholder:text-gray-500 placeholder:italic focus:ring-2 focus:ring-teal-600"
                             value={loginInfo.password}
                         />
                     </div>
-                    <button type='submit' className="w-full bg-teal-700 text-white py-2 rounded-lg hover:bg-teal-800 transition">
+
+                    <button type='submit' className="bg-teal-700 text-white text-lg font-semibold py-3 rounded-md mt-2 transition duration-300 hover:bg-teal-800">
                         Login
                     </button>
                 </form>
                 <p className="text-center mt-4 text-gray-600">
-                    Don't have an account?{' '}
-                    <Link to="/signup" className="text-teal-700 font-semibold hover:underline">
+                    Don't have an account?
+                    <Link to="/signup" className="text-teal-700 font-bold ml-1 hover:underline">
                         Signup
                     </Link>
                 </p>

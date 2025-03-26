@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { handleError, handleSuccess } from '../lib/utils'; // ✅ handleSuccess ko bhi import karna zaroori hai
+import { handleError, handleSuccess } from '../lib/utils';
 
 function Signup() {
     const [signupInfo, setSignupInfo] = useState({
@@ -24,7 +24,7 @@ function Signup() {
         if (!name || !email || !password) {
             return handleError('Name, email, and password are required');
         }
-
+        
         try {
             const url = "http://localhost:8080/auth/signup";
             const response = await fetch(url, {
@@ -34,8 +34,8 @@ function Signup() {
             });
 
             const result = await response.json();
-            console.log("Response:", result); // Debugging ke liye
-            const {success, message, error}=result; 
+            console.log("Response:", result);
+            const {success, message, error} = result;
 
             if (response.status === 409) {
                 return handleError("User already exists. Please login.");
@@ -45,9 +45,8 @@ function Signup() {
                 handleSuccess(result.message);
                 setTimeout(() => navigate('/login'), 1000);
             } else if(error){
-                const details=error?.details[0].message;
+                const details = error?.details[0].message;
                 handleError(details);
-                
             }
             else if(!success){
                 handleError(message);
@@ -63,56 +62,49 @@ function Signup() {
 
     return (
         <div className="min-h-screen flex justify-center items-center bg-gray-100 py-10">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-                <h1 className="text-2xl font-bold text-center mb-6">Signup</h1>
-                <form className="space-y-4" onSubmit={handleSignup}>
-                    <div>
-                        <label htmlFor="name" className="block text-gray-700 font-medium">
-                            Name
-                        </label>
+            <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+                <h1 className="text-2xl font-bold text-center mb-5">Signup</h1>
+                <form className="flex flex-col gap-4 w-full" onSubmit={handleSignup}>
+                    <div className="flex flex-col">
+                        <label htmlFor="name" className="text-lg font-medium mb-1">Name</label>
                         <input
                             onChange={handleChange}
                             type="text"
                             name="name"
-                            autoFocus
                             placeholder="Enter your name..."
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
+                            className="text-lg p-2 outline-none border border-gray-300 rounded-md placeholder:text-gray-500 placeholder:italic focus:ring-2 focus:ring-teal-600"
                             value={signupInfo.name}
                         />
                     </div>
-                    <div>
-                        <label htmlFor="email" className="block text-gray-700 font-medium">
-                            Email
-                        </label>
+                    <div className="flex flex-col">
+                        <label htmlFor="email" className="text-lg font-medium mb-1">Email</label>
                         <input
                             onChange={handleChange}
                             type="email"
                             name="email"
                             placeholder="Enter your email..."
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
+                            className="text-lg p-2 outline-none border border-gray-300 rounded-md placeholder:text-gray-500 placeholder:italic focus:ring-2 focus:ring-teal-600"
                             value={signupInfo.email}
                         />
                     </div>
-                    <div>
-                        <label htmlFor="password" className="block text-gray-700 font-medium">
-                            Password
-                        </label>
+                    <div className="flex flex-col">
+                        <label htmlFor="password" className="text-lg font-medium mb-1">Password</label>
                         <input
                             onChange={handleChange}
                             type="password"
                             name="password"
                             placeholder="Enter your password..."
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
+                            className="text-lg p-2 outline-none border border-gray-300 rounded-md placeholder:text-gray-500 placeholder:italic focus:ring-2 focus:ring-teal-600"
                             value={signupInfo.password}
                         />
                     </div>
-                    <button type='submit' className="w-full bg-teal-700 text-white py-2 rounded-lg hover:bg-teal-800 transition">
+                    <button type='submit' className="bg-teal-600 text-white text-lg font-semibold py-3 rounded-md mt-2 transition duration-300 hover:bg-teal-800">
                         Signup
                     </button>
                 </form>
                 <p className="text-center mt-4 text-gray-600">
-                    Already have an account?{' '}
-                    <Link to="/login" className="text-teal-700 font-semibold hover:underline">
+                    Already have an account?
+                    <Link to="/login" className="text-teal-600 font-bold ml-1 hover:underline">
                         Login
                     </Link>
                 </p>
