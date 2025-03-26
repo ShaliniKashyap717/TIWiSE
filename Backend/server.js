@@ -3,7 +3,7 @@ const app=express();
 const bodyParser = require('body-parser');
 
 const cors=require('cors');
-const AuthRouter = require('./routes/AuthRoutes.js'); // Fix the name
+const AuthRouter = require('./routes/authRoutes.js'); 
 
 
 require('dotenv').config();
