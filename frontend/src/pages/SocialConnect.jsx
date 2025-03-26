@@ -1,98 +1,168 @@
-import React from 'react';
-import { Users, Calendar, MessageSquare, PlusCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import io from 'socket.io-client';
+import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import 'leaflet/dist/leaflet.css';
 import Sidebar from '../components/Sidebar';
+import { motion } from 'framer-motion'; // For animations
+
+const socket = io('http://localhost:5000'); // Connect to backend server
 
 const SocialConnect = () => {
+  const [roomId, setRoomId] = useState('');
+  const [joined, setJoined] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
+  const [otherUserLocation, setOtherUserLocation] = useState(null);
+  const [distanceData, setDistanceData] = useState([]);
+
+  // Function to create a new room
+  const createRoom = () => {
+    const newRoomId = Math.random().toString(36).substring(2, 8);
+    setRoomId(newRoomId);
+    socket.emit('create-room', newRoomId);
+    setJoined(true);
+  };
+
+  // Function to join an existing room
+  const joinRoom = () => {
+    if (roomId) {
+      socket.emit('join-room', roomId);
+      setJoined(true);
+    }
+  };
+
+  // Track user location
+  useEffect(() => {
+    if (!joined) return;
+    
+    const updateLocation = (position) => {
+      const { latitude, longitude } = position.coords;
+      setUserLocation({ lat: latitude, lng: longitude });
+      socket.emit('send-location', { roomId, location: { lat: latitude, lng: longitude } });
+    };
+    
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(updateLocation);
+    }
+  }, [joined, roomId]);
+
+  // Listen for other user's location
+  useEffect(() => {
+    socket.on('receive-location', (location) => {
+      setOtherUserLocation(location);
+    });
+  }, []);
+
+  // Calculate distance (Haversine formula)
+  const calculateDistance = (loc1, loc2) => {
+    if (!loc1 || !loc2) return 0;
+    const R = 6371;
+    const dLat = (loc2.lat - loc1.lat) * (Math.PI / 180);
+    const dLng = (loc2.lng - loc1.lng) * (Math.PI / 180);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(loc1.lat * (Math.PI / 180)) *
+              Math.cos(loc2.lat * (Math.PI / 180)) *
+              Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return (R * c).toFixed(2);
+  };
+
+  useEffect(() => {
+    if (userLocation && otherUserLocation) {
+      const distance = calculateDistance(userLocation, otherUserLocation);
+      setDistanceData((prev) => [...prev, { time: new Date().toLocaleTimeString(), distance }]);
+    }
+  }, [userLocation, otherUserLocation]);
+
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Use the main Sidebar component */}
       <Sidebar />
+      
+      {/* Main Content */}
+      <main className="flex-1 p-8">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-2xl font-bold text-center mb-4 text-teal-500"
+        >
+          Social Connect
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-lg text-gray-600 text-center mb-6"
+        >
+          Connect with friends in real-time, anywhere, anytime.
+        </motion.p>
 
-      <main className="flex-1 overflow-y-auto p-6">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold">Connect with Fellow Travelers</h1>
-          <p className="text-gray-600 mt-2">
-            Join our vibrant community of global explorers. Share experiences, get travel tips, and make friends from around the world.
-          </p>
-        </div>
-
-        {/* Features Section */}
-        <div className="grid grid-cols-3 gap-6 mb-8">
-          {/* Travel Communities */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="flex items-center gap-3 mb-3">
-              <Users className="text-blue-600 w-6 h-6" />
-              <h2 className="text-lg font-semibold">Travel Communities</h2>
-            </div>
-            <p className="text-gray-600 text-sm">
-              Join themed groups based on your travel interests, from backpacking to luxury travels.
-            </p>
-            <div className="mt-4 flex -space-x-2">
-              {/* Dummy avatars */}
-              {['/avatar1.jpg', '/avatar2.jpg', '/avatar3.jpg', '/avatar4.jpg'].map((src, index) => (
-                <img key={index} src={src} alt="user" className="w-8 h-8 rounded-full border-2 border-white" />
-              ))}
-              <span className="text-sm text-gray-500 ml-2">+42</span>
-            </div>
+        {!joined ? (
+          <div className="flex justify-center gap-4">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              onClick={createRoom}
+              className="bg-teal-500 text-white px-4 py-2 rounded"
+            >
+              Create Room
+            </motion.button>
+            <input 
+              type="text" 
+              placeholder="Enter Room ID" 
+              value={roomId} 
+              onChange={(e) => setRoomId(e.target.value)}
+              className="border px-3 py-2 rounded"
+            />
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              onClick={joinRoom}
+              className="bg-teal-500 text-white px-4 py-2 rounded"
+            >
+              Join Room
+            </motion.button>
           </div>
-
-          {/* Meetups & Events */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="flex items-center gap-3 mb-3">
-              <Calendar className="text-purple-600 w-6 h-6" />
-              <h2 className="text-lg font-semibold">Meetups & Events</h2>
+        ) : (
+          <>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center text-lg"
+            >
+              Room ID: <strong>{roomId}</strong>
+            </motion.p>
+            <div className="grid grid-cols-2 gap-6 mt-6">
+              {/* Map View */}
+              <MapContainer center={[20, 77]} zoom={5} className="h-64 w-full rounded">
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                {userLocation && <Marker position={[userLocation.lat, userLocation.lng]} />}
+                {otherUserLocation && <Marker position={[otherUserLocation.lat, otherUserLocation.lng]} />}
+                {userLocation && otherUserLocation && (
+                  <Polyline positions={[[userLocation.lat, userLocation.lng], [otherUserLocation.lat, otherUserLocation.lng]]} color="teal" />
+                )}
+              </MapContainer>
+              
+              {/* Distance Chart */}
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={distanceData}>
+                  <XAxis dataKey="time" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="distance" stroke="#0097A7" />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
-            <p className="text-gray-600 text-sm">
-              Attend local meetups, travel workshops, and cultural exchange events.
-            </p>
-            <ul className="text-sm text-gray-700 mt-3">
-              <li>✅ Next event in Paris - <span className="text-gray-900 font-medium">June 15, 2025</span></li>
-              <li>✅ Tokyo Meetup - <span className="text-gray-900 font-medium">July 2, 2025</span></li>
-            </ul>
-          </div>
-
-          {/* Travel Forum */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="flex items-center gap-3 mb-3">
-              <MessageSquare className="text-green-600 w-6 h-6" />
-              <h2 className="text-lg font-semibold">Travel Forum</h2>
-            </div>
-            <p className="text-gray-600 text-sm">
-              Ask questions, share tips, and engage in travel discussions.
-            </p>
-            <p className="text-sm text-gray-700 mt-3">
-              <strong className="text-gray-900">1.2K</strong> Active Discussions <br />
-              <strong className="text-gray-900">250+</strong> Daily Posts
-            </p>
-          </div>
-        </div>
-
-        {/* Featured Travelers */}
-        <div className="text-center mb-6">
-          <h2 className="text-lg font-semibold">Featured Travelers</h2>
-        </div>
-
-        <div className="flex justify-center gap-8 mb-8">
-          {[
-            { name: 'Mike R.', category: 'Adventure', img: '/traveler1.jpg' },
-            { name: 'Sarah L.', category: 'Food & Culture', img: '/traveler2.jpg' },
-            { name: 'Emma K.', category: 'Photography', img: '/traveler3.jpg' },
-            { name: 'Lisa M.', category: 'Eco Travel', img: '/traveler4.jpg' }
-          ].map((traveler, index) => (
-            <div key={index} className="text-center">
-              <img src={traveler.img} alt={traveler.name} className="w-14 h-14 rounded-full mx-auto mb-2" />
-              <p className="text-sm font-medium">{traveler.name}</p>
-              <p className="text-xs text-gray-500">{traveler.category}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Join Button */}
-        <div className="text-center">
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-blue-700 transition">
-            Join Our Community
-          </button>
-        </div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-lg text-gray-600 text-center mt-6"
+            >
+              Stay connected, stay close.
+            </motion.p>
+          </>
+        )}
       </main>
     </div>
   );

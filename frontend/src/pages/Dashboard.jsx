@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Menu, Waves, Mountain, Search, SlidersHorizontal } from "lucide-react";
@@ -20,9 +20,11 @@ const Dashboard = () => {
   const moodCategories = [
     { icon: <Waves className="text-teal-500" size={20} />, title: "Party", color: "bg-teal-100" },
     { icon: <Mountain className="text-teal-500" size={20} />, title: "Adventure", color: "bg-teal-100" },
+    { icon: <Waves className="text-teal-500" size={20} />, title: "Relax", color: "bg-teal-100" },
     { icon: <Waves className="text-teal-500" size={20} />, title: "Romance", color: "bg-teal-100" },
     { icon: <Waves className="text-teal-500" size={20} />, title: "Happy", color: "bg-teal-100" },
     { icon: <Waves className="text-teal-500" size={20} />, title: "Calming", color: "bg-teal-100" },
+    
   ];
 
   const destinations = [
@@ -46,13 +48,43 @@ const Dashboard = () => {
     { title: "Most Rated Hotels" }
   ];
 
+  const fetchMovies = async (mood) => {
+    try {
+      const response = await axios.get(
+        `https://www.omdbapi.com/?s=${mood}&apikey=f688c63d`
+      );
+  
+      if (response.data.Search) {
+        const currentYear = new Date().getFullYear();
+        const filteredMovies = response.data.Search.filter(movie => {
+          const movieYear = parseInt(movie.Year, 10);
+          return movieYear >= currentYear - 10;
+        });
+  
+        if (filteredMovies.length > 3) {
+          // Shuffle the filtered movies to get a random selection
+          const shuffledMovies = filteredMovies.sort(() => 0.5 - Math.random());
+          setMovies(shuffledMovies.slice(0, 3));
+        } else {
+          setMovies(filteredMovies);
+        }
+  
+        toast.success(`Fetched movies for ${mood}!`);
+      } else {
+        toast.error(`No movies found for ${mood}!`);
+        setMovies([]);
+      }
+    } catch (error) {
+      console.error("Error fetching movies:", error);
+      toast.error("Failed to fetch movies.");
+      setMovies([]);
+    }
+  };
+  
+
   const handleMoodClick = (mood) => {
     setSelectedMood(mood);
-    toast.success(`Selected Mood: ${mood}`);
-    setMovies([
-      { imdbID: "1", Title: "Sample Movie 1", Year: "2022", Poster: "https://via.placeholder.com/150" },
-      { imdbID: "2", Title: "Sample Movie 2", Year: "2021", Poster: "https://via.placeholder.com/150" },
-    ]);
+    fetchMovies(mood);
   };
 
   return (
@@ -114,6 +146,48 @@ const Dashboard = () => {
         <div className="flex flex-col lg:flex-row gap-6 mb-8">
           {/* Left Column - Recommendation and Mood Sections */}
           <div className="flex-1 space-y-6">
+            {/* Movie Recommendations Section */}
+            {selectedMood && (
+              <section className="bg-white rounded-xl shadow p-6">
+                <h2 className="text-xl font-semibold mb-4">
+                  Enjoy your travel with these movies
+                </h2>
+                <div className="flex flex-wrap gap-4">
+                  {movies.map((movie) => (
+                    <div key={movie.imdbID} className="bg-white rounded-lg shadow-md w-48">
+                      <img
+                        src={movie.Poster}
+                        alt={movie.Title}
+                        className="h-32 w-full object-cover rounded-t-lg"
+                      />
+                      <div className="p-2">
+                        <h3 className="font-medium text-sm truncate">{movie.Title}</h3>
+                        <p className="text-xs text-gray-600">{movie.Year}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Mood Section */}
+            {!selectedMood && (
+              <section className="bg-white rounded-xl shadow p-6">
+                <h2 className="text-xl font-semibold mb-4">How do you feel today?</h2>
+                <div className="grid grid-cols-3 gap-4">
+                  {moodCategories.map((category, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleMoodClick(category.title)}
+                      className="w-full h-24 transition-transform transform hover:scale-105"
+                    >
+                      <MoodCard {...category} />
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Recommendation Section */}
             <section className="bg-white rounded-xl shadow p-6">
               <h2 className="text-xl font-semibold mb-4">Most Visited Places</h2>
@@ -129,28 +203,11 @@ const Dashboard = () => {
                 ))}
               </div>
             </section>
-
-            {/* Mood Section */}
-            <section className="bg-white rounded-xl shadow p-6">
-              <h2 className="text-xl font-semibold mb-4">How do you feel today?</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                {moodCategories.map((category, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleMoodClick(category.title)}
-                    className="w-full h-24 transition-transform transform hover:scale-105"
-                  >
-                    <MoodCard {...category} />
-                  </button>
-                ))}
-              </div>
-            </section>
           </div>
 
           {/* Right Column - Graph Section */}
           <div className="flex-1">
             <section className="bg-white rounded-xl shadow p-6 h-full">
-             
               <select
                 className="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 w-full mb-4 focus:ring-2 focus:ring-blue-500 focus:outline-none "
                 value={summarySection}
@@ -162,34 +219,12 @@ const Dashboard = () => {
                   </option>
                 ))}
               </select>
-              <div className="h-[calc(100%-100px)]"> {/* Adjust height calculation as needed */}
+              <div className="h-[calc(100%-100px)]">
                 <Chart type={summarySection} />
               </div>
             </section>
           </div>
         </div>
-
-        {/* Movie Recommendations (shown when mood is selected) */}
-        {selectedMood && (
-          <section className="bg-white rounded-xl shadow p-6 mb-8">
-            <h2 className="text-xl font-semibold mb-4">Enjoy your travel with these</h2>
-            <div className="flex overflow-x-auto gap-4 py-2">
-              {movies.map((movie) => (
-                <div key={movie.imdbID} className="bg-white rounded-lg shadow-md flex-none w-48">
-                  <img
-                    src={movie.Poster}
-                    alt={movie.Title}
-                    className="h-32 w-full object-cover rounded-t-lg"
-                  />
-                  <div className="p-2">
-                    <h3 className="font-medium text-sm truncate">{movie.Title}</h3>
-                    <p className="text-xs text-gray-600">{movie.Year}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* Additional Sections */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
