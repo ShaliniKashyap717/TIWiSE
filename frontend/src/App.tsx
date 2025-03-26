@@ -1,9 +1,8 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";  // ❌ BrowserRouter hata diya!
 
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
@@ -21,13 +20,13 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <DarkModeWrapper>
-<QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        {/*  BrowserRouter yaha se hata diya! */}
         <Routes>
-          <Route path="/" element={<Home/>} />
+          <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/expenses" element={<Expenses />} />
@@ -37,13 +36,9 @@ const App = () => (
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-
+      </TooltipProvider>
+    </QueryClientProvider>
   </DarkModeWrapper>
-  );
+);
 
 export default App;
-
-

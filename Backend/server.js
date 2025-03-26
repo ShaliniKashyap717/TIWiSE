@@ -1,21 +1,28 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const connectDB = require("./config/db");
-const authRoutes = require("./routes/authRoutes");
+const express =require('express');
+const app=express();
+const bodyParser = require('body-parser');
 
-dotenv.config();
-connectDB(); // 🔥 Isse server start hone se pehle database connect hoga
+const cors=require('cors');
+const AuthRouter = require('./routes/AuthRoutes.js'); // Fix the name
 
-const app = express();
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
-app.use(express.json());
-app.use(cookieParser());
+require('dotenv').config();
+require('./Models/db');
 
-app.use("/api/auth", authRoutes);
+const PORT=process.env.PORT||8080
 
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+app.get('/ping',(req,res)=>{
+    res.send('PONG');
+})
+app.use((req, res, next) => {
+    console.log(`Incoming request: ${req.method} ${req.url}`);
+    next();
 });
+
+app.use(bodyParser.json());
+app.use(cors());
+app.use('/auth',AuthRouter)
+
+app.listen(PORT,()=>{
+    console.log(`server is running on ${PORT}`)
+})

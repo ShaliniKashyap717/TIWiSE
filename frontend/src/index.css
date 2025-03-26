@@ -109,3 +109,85 @@
     @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500;
   }
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  padding: 32px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 8px 8px 24px rgba(66, 68, 90, 0.3);
+}
+
+.container h1 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.container div {
+  display: flex;
+  flex-direction: column;
+}
+
+.container label {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.container input {
+  font-size: 16px;
+  padding: 10px;
+  outline: none;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.container input::placeholder {
+  font-size: 14px;
+  font-style: italic;
+  color: #999;
+}
+
+button {
+  background-color: purple;
+  border: none;
+  font-size: 18px;
+  color: white;
+  border-radius: 5px;
+  padding: 12px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: darkmagenta;
+}
+
+.container span {
+  text-align: center;
+  font-size: 14px;
+}
+
+.container span a {
+  color: purple;
+  font-weight: bold;
+  margin-left: 5px;
+  text-decoration: none;
+}
+
+.container span a:hover {
+  text-decoration: underline;
+}
