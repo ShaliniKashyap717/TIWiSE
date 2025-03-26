@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom"; // Only import Routes and Route
+import { Routes, Route } from "react-router-dom"; 
 import { Toaster } from "./components/ui/sonner";
 import Dashboard from './pages/Dashboard'
 import Profile from "./pages/Profile";
@@ -8,11 +8,11 @@ import SafePlaces from "./pages/SafePlaces";
 import SocialConnect from "./pages/SocialConnect";
 import Accessibility from "./pages/Accessibility";
 import Settings from "./pages/Settings";
-import Newsletter from "./pages/Newsletter"; // ✅ Added Newsletter route
+import Newsletter from "./pages/Newsletter"; 
 import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
-import Signup from "./pages/Signup"; // Path check karo
-import Login from './pages/Login';  // Ya jahan bhi Login component hai
+import Signup from "./pages/Signup"; 
+import Login from './pages/Login';  
 
 
 import { Navigate } from "react-router-dom";
@@ -32,7 +32,7 @@ const App = () => (
       <Route path="/social-connect" element={<SocialConnect />} />
       <Route path="/accessibility" element={<Accessibility />} />
       <Route path="/settings" element={<Settings />} />
-      <Route path="/newsletter" element={<Newsletter />} /> {/* ✅ Now it will work */}
+      <Route path="/newsletter" element={<Newsletter />} /> 
       <Route path="*" element={<NotFound />} />
     </Routes>
   </>
