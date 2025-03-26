@@ -12,7 +12,8 @@ import Newsletter from "./pages/Newsletter";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
 import Signup from "./pages/Signup"; 
-import Login from './pages/Login';  
+import Login from './pages/Login'; 
+ 
 
 
 import { Navigate } from "react-router-dom";
