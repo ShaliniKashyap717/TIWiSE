@@ -13,7 +13,6 @@ Despite the increasing reliance on digital solutions, **there is no single integ
 ---
 
 ## 🎯 Objective  
-## 🎯 Objective  
 WanderWiSE aims to **revolutionize the travel experience** by offering an **intelligent, inclusive, and secure tourism platform** that:  
 
 ✅ **Competitor Trend Analysis for Businesses**  
