@@ -22,11 +22,11 @@ const App = () => (
   <>
     <Toaster position="top-right" />
     <Routes>
-      <Route path='/' element={<Navigate to="/login"/>} />
+      {/* <Route path='/' element={<Navigate to="/login"/>} /> */}
       <Route path='/login' element={<Login/>} />
       <Route path='/signup' element={<Signup/>} />
       <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/home" element={<Home/>} />
+      <Route path="/" element={<Home/>} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/expenses" element={<Expenses />} />
       <Route path="/safe-places" element={<SafePlaces />} />
