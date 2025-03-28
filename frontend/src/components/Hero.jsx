@@ -23,6 +23,8 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-teal-900/70 to-teal-800/40"></div>
       </div>
 
+      
+
       {/* Content */}
       <div className="container mx-auto px-4 md:px-6 relative z-10 py-16">
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
