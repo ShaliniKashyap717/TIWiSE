@@ -19,9 +19,7 @@ const Settings = () => {
 
   return (
     <div
-      className={`flex h-screen ${
-        isDarkMode ? "bg-gray-800" : "bg-gray-100"
-      }`}
+      className={`flex h-screen ${isDarkMode ? "bg-gray-800" : "bg-gray-100"}`}
     >
       <Sidebar />
 
@@ -47,8 +45,8 @@ const Settings = () => {
                 />
                 {/* Upload Button */}
                 <label
-                  className={`absolute bottom-0 right-0 bg-blue-600 ${
-                    isDarkMode ? "bg-blue-500" : "bg-blue-600"
+                  className={`absolute bottom-0 right-0 bg-teal-600 ${
+                    isDarkMode ? "bg-teal-500" : "bg-teal-600"
                   } p-2 rounded-full cursor-pointer`}
                 >
                   <Camera
@@ -149,9 +147,9 @@ const Settings = () => {
             </p>
             <img src="/map-placeholder.png" alt="Location" className="rounded-lg shadow-md" />
             <button
-              className={`mt-4 bg-blue-600 ${
-                isDarkMode ? "bg-blue-500" : "bg-blue-600"
-              } text-white w-full py-2 rounded-md hover:bg-blue-700 transition`}
+              className={`mt-4 bg-teal-600 ${
+                isDarkMode ? "bg-teal-500" : "bg-teal-600"
+              } text-white w-full py-2 rounded-md hover:bg-teal-700 transition`}
             >
               Update Location
             </button>
@@ -211,9 +209,9 @@ const Settings = () => {
         {/* Save Button */}
         <div className="text-right mt-6">
           <button
-            className={`bg-blue-600 ${
-              isDarkMode ? "bg-blue-500" : "bg-blue-600"
-            } text-white px-6 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-blue-700 transition`}
+            className={`bg-teal-600 ${
+              isDarkMode ? "bg-teal-500" : "bg-teal-600"
+            } text-white px-6 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-teal-700 transition`}
           >
             Save Changes
           </button>

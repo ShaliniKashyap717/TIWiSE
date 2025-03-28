@@ -7,6 +7,7 @@ import {
   Users, 
   Accessibility, 
   Shield, 
+  Settings, 
   LogOut
 } from 'lucide-react';
 
@@ -56,25 +57,34 @@ const Sidebar = () => {
           <span>Accessibility</span>
         </NavLink>
         
+        {/* Safe Places Link */}
         <NavLink to="/safe-places" className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''} mt-2`}>
           <Shield size={20} />
           <span>Safe Places</span>
         </NavLink>
+
+        {/* Settings Link */}
+        <NavLink to="/settings" className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''} mt-2`}>
+          <Settings size={20} />
+          <span>Settings</span>
+        </NavLink>
       </nav>
       
+      {/* User Profile Section */}
       <div className="p-4 border-t border-gray-200">
-        <div className="flex items-center gap-3">
-          <img 
-            src="https://i.pravatar.cc/150?img=32" 
-            alt="User Avatar" 
-            className="w-10 h-10 rounded-full border border-gray-200"
-          />
-          <div>
-            <p className="font-medium text-sm">John Doe</p>
-            <p className="text-xs text-gray-500">Travel Enthusiast</p>
-          </div>
-        </div>
-      </div>
+  <div className="flex items-center gap-3">
+    <img
+      src="https://i.pravatar.cc/150?img=32"
+      alt="User Avatar"
+      className="w-10 h-10 rounded-full border border-gray-200"
+    />
+    <div>
+      <p className="font-medium text-sm">Sarah Johnson</p>
+      <p className="text-xs text-gray-500">Travel Enthusiast</p>
+    </div>
+  </div>
+</div>
+
     </aside>
   );
 };

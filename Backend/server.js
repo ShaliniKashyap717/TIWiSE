@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 
 const cors=require('cors');
 const AuthRouter = require('./routes/authRoutes.js'); 
+const { exec } = require("child_process");
 
 
 require('dotenv').config();
@@ -21,7 +22,34 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 app.use(cors());
-app.use('/auth',AuthRouter)
+app.use('/auth',AuthRouter);
+
+app.get("/trends", (req, res) => {
+    const { cityA, cityB } = req.query;
+
+    if (!cityA || !cityB) {
+        return res.status(400).json({ error: "Please provide two cities." });
+    }
+
+    const command = `python trends.py "${cityA}" "${cityB}"`;
+
+    exec(command, (error, stdout, stderr) => {
+        if (error) {
+            console.error("Google Trends API Error:", stderr);
+            return res.status(500).json({ error: "Failed to fetch trends." });
+        }
+
+        try {
+            console.log("Trends Data Sent to Frontend:", stdout);  // Debugging log
+            const data = JSON.parse(stdout);  // Ensure JSON is valid
+            res.json(data);
+        } catch (parseError) {
+            console.error("JSON Parsing Error:", parseError.message);
+            res.status(500).json({ error: "Invalid JSON response from Python script." });
+        }
+    });
+});
+
 
 app.listen(PORT,()=>{
     console.log(`server is running on ${PORT}`)
