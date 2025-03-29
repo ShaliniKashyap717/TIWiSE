@@ -45,7 +45,7 @@ app.get("/trends", (req, res) => {
         try {
             console.log("Trends Data Sent to Frontend:", stdout);  // Debugging log
             const data = JSON.parse(stdout);  // Ensure JSON is valid
-           return res.json(data);
+            res.json(data);
         } catch (parseError) {
             console.error("JSON Parsing Error:", parseError.message);
             res.status(500).json({ error: "Invalid JSON response from Python script." });
