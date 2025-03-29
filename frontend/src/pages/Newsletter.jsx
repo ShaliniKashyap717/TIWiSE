@@ -53,7 +53,7 @@ const handleSubmit = async (e) => {
     setIsLoading(true);
     
     try {
-      const result = await axios.post('http://localhost:8000/api/subscribers/subscribe',
+      const result = await axios.post('http://localhost:5000/api/subscribers/subscribe',
         {
           email: formData.email, 
           fullName:formData.fullName});
