@@ -1,16 +1,15 @@
 const express =require('express');
 const app=express();
 const bodyParser = require('body-parser');
-
 const cors=require('cors');
 const AuthRouter = require('./routes/authRoutes.js'); 
 const { exec } = require("child_process");
-
-
+const subscriberRoutes= require('./routes/subscriberRoutes.js')
+const newsletterJob = require('./utils/cronJob')
 require('dotenv').config();
 require('./Models/db');
 
-const PORT=process.env.PORT||8080
+const PORT=process.env.PORT||5000
 
 app.get('/ping',(req,res)=>{
     res.send('PONG');
@@ -23,6 +22,10 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 app.use(cors());
 app.use('/auth',AuthRouter);
+app.use('/api/subscribers', subscriberRoutes);
+
+newsletterJob.start();
+
 
 app.get("/trends", (req, res) => {
     const { cityA, cityB } = req.query;
@@ -42,7 +45,7 @@ app.get("/trends", (req, res) => {
         try {
             console.log("Trends Data Sent to Frontend:", stdout);  // Debugging log
             const data = JSON.parse(stdout);  // Ensure JSON is valid
-            res.json(data);
+           return res.json(data);
         } catch (parseError) {
             console.error("JSON Parsing Error:", parseError.message);
             res.status(500).json({ error: "Invalid JSON response from Python script." });

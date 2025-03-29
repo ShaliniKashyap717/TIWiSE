@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { Menu, Waves, Mountain, Search, SlidersHorizontal } from "lucide-react";
 import axios from 'axios';
 import CompetitorPriceComparison from "./charts/CompetitorPriceComparison";
-
 import Sidebar from "../components/Sidebar";
 import MoodCard from "../components/MoodCard";
 import DestinationCard from "../components/DestinationCard";
@@ -87,7 +86,7 @@ const Dashboard = () => {
           </div>
 
           {/* Right Column - Graph Section */}
-          <div className="w-full lg:w-1/2">
+          <div className="w-full lg:w-1/2" id="newsletter-capture-target">
             <section className="bg-white rounded-xl shadow p-6 h-full">
               <select
                 className="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 w-full mb-4 focus:ring-2 focus:ring-blue-500 focus:outline-none "

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { handleError, handleSuccess } from '../lib/utils';
+//import { resourceLimits } from 'worker_threads';
 
 function Signup() {
     const [signupInfo, setSignupInfo] = useState({
@@ -26,14 +27,15 @@ function Signup() {
         }
         
         try {
-            const url = "http://localhost:8080/auth/signup";
+            const url = "http://localhost:5000/auth/signup";
             const response = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(signupInfo),
             });
 
-            const result = await response.json();
+         const result = await response.json();
+            
             console.log("Response:", result);
             const {success, message, error} = result;
 
