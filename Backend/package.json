@@ -22,7 +22,7 @@
     "google-trends-api": "^4.9.2",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.13.0",
+    "mongoose": "^8.13.1",
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
     "puppeteer": "^24.4.0",
