@@ -1,15 +1,38 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom"; 
 import { CheckCircle } from "lucide-react";
-import Sidebar from '../components/Sidebar'; 
+import Sidebar from '../components/Sidebar';
+import axios from 'axios'
+
+const INTERESTS_OPTIONS = ["Travel Tips", "Destinations", "Local Events", "Travel Deals"];
+const TESTIMONIALS = [
+  {
+    name: "Sarah Johnson",
+    review: "The daily updates have helped me plan my trips better. Love the personalized recommendations!",
+    avatar: "https://i.pravatar.cc/150?img=32",
+  },
+  {
+    name: "Michael Chen",
+    review: "The exclusive deals have saved me hundreds on my travels. Highly recommended!",
+    avatar: "https://i.pravatar.cc/150?img=57",
+  }
+];
+const BENEFITS = [
+  "Exclusive travel deals and discounts",
+  "Expert travel tips and guides",
+  "Latest destination updates",
+  "Personalized travel recommendations",
+];
 
 const Newsletter = () => {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     interests: [],
-    frequency: "Daily Updates",
   });
+  const [message, setMessage] = useState('');
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -25,17 +48,48 @@ const Newsletter = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(`Subscribed successfully! ✅`);
+    setIsLoading(true);
+    
+    try {
+      const result = await axios.post('http://localhost:5000/api/subscribers/subscribe',
+        {
+          email: formData.email, 
+          fullName:formData.fullName});
+      setMessage(result.message);
+      setIsSubscribed(true);
+    } catch (error) {
+      setMessage(error.response?.data?.message || 'Subscription failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  if (isSubscribed) {
+    return (
+      <div className="flex min-h-screen bg-gray-100">
+        <Sidebar />
+        <main className="flex-1 p-8">
+          <div className="bg-white p-8 rounded-lg shadow-md max-w-2xl mx-auto text-center">
+            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2">Subscription Successful!</h2>
+            <p className="text-gray-600 mb-6">{message}</p>
+            <Link 
+              to="/" 
+              className="inline-block bg-teal-500 text-white px-6 py-2 rounded-lg hover:bg-teal-700"
+            >
+              Return Home
+            </Link>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      {/* Use the main Sidebar component */}
       <Sidebar />
-      
-      {/* Main Content */}
       <main className="flex-1 p-8">
         <h2 className="text-2xl font-bold mb-4">Newsletter Subscription</h2>
         <p className="text-gray-600 mb-6">
@@ -43,7 +97,6 @@ const Newsletter = () => {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Subscription Form */}
           <form
             onSubmit={handleSubmit}
             className="bg-white p-6 rounded-lg shadow-md md:col-span-2"
@@ -84,7 +137,7 @@ const Newsletter = () => {
             <div className="mb-4">
               <label className="block text-gray-600 mb-2">Interests</label>
               <div className="grid grid-cols-2 gap-2">
-                {["Travel Tips", "Destinations", "Local Events", "Travel Deals"].map((item) => (
+                {INTERESTS_OPTIONS.map((item) => (
                   <label key={item} className="flex items-center space-x-2">
                     <input
                       type="checkbox"
@@ -99,39 +152,26 @@ const Newsletter = () => {
               </div>
             </div>
 
-            <div className="mb-4">
-              <label className="block text-gray-600">Frequency</label>
-              <select
-                name="frequency"
-                value={formData.frequency}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-lg"
-              >
-                <option>Daily Updates</option>
-                <option>Weekly Updates</option>
-                <option>Monthly Updates</option>
-              </select>
-            </div>
-
             <button
               type="submit"
-              className="w-full bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-700"
+              disabled={isLoading}
+              className="w-full bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Subscribe Now
+              {isLoading ? 'Subscribing...' : 'Subscribe Now'}
             </button>
+            
+            {message && (
+              <p className={`mt-4 text-center ${isSubscribed ? 'text-green-500' : 'text-red-500'}`}>
+                {message}
+              </p>
+            )}
           </form>
 
-          {/* Side Info */}
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold mb-4">Why Subscribe?</h3>
               <ul className="space-y-2 text-gray-600">
-                {[
-                  "Exclusive travel deals and discounts",
-                  "Expert travel tips and guides",
-                  "Latest destination updates",
-                  "Personalized travel recommendations",
-                ].map((reason) => (
+                {BENEFITS.map((reason) => (
                   <li key={reason} className="flex items-center space-x-2">
                     <CheckCircle className="text-green-500" size={16} />
                     <span>{reason}</span>
@@ -145,20 +185,7 @@ const Newsletter = () => {
                 What Our Subscribers Say
               </h3>
               <div className="space-y-4">
-                {[
-                  {
-                    name: "Sarah Johnson",
-                    review:
-                      "The daily updates have helped me plan my trips better. Love the personalized recommendations!",
-                    avatar: "https://i.pravatar.cc/150?img=32",
-                  },
-                  {
-                    name: "Michael Chen",
-                    review:
-                      "The exclusive deals have saved me hundreds on my travels. Highly recommended!",
-                    avatar: "https://i.pravatar.cc/150?img=57",
-                  },
-                ].map((user) => (
+                {TESTIMONIALS.map((user) => (
                   <div key={user.name} className="flex items-center space-x-4">
                     <img
                       src={user.avatar}
