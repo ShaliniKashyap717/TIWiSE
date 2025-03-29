@@ -108,37 +108,63 @@ const Dashboard = () => {
 
      
 
-        <div className="p-6 bg-gray-100 min-h-screen">
+        <div className="p-8 bg-gradient-to-r from-teal-50 to-teal-100 min-h-screen">
+      {/* Title & Tagline */}
+      <h1 className="text-3xl font-bold text-teal-800 text-center mb-4">
+        Compare Travel Trends 📊✈️
+      </h1>
+      <p className="text-lg text-teal-700 text-center mb-8 italic">
+        "Discover the pulse of travel between two iconic destinations!"
+      </p>
+
       {/* City Selection */}
-      <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
-        <label className="font-semibold">Select City A:</label>
-        <select
-          value={cityA}
-          onChange={(e) => setCityA(e.target.value)}
-          className="p-2 border border-gray-300 rounded-md"
-        >
-          {indianCities.map((city) => (
-            <option key={city} value={city}>
-              {city}
-            </option>
-          ))}
-        </select>
+      <div className="bg-white p-6 rounded-xl shadow-md max-w-3xl mx-auto border-t-4 border-teal-400">
+        <h2 className="text-xl font-semibold text-teal-800 mb-4 text-center">
+          Pick Two Cities for a Travel Face-Off! 🌍
+        </h2>
 
-        <label className="font-semibold">Select City B:</label>
-        <select
-          value={cityB}
-          onChange={(e) => setCityB(e.target.value)}
-          className="p-2 border border-gray-300 rounded-md"
-        >   {indianCities.map((city) => (
-            <option key={city} value={city}>
-              {city}
-            </option>
-          ))}
-        </select>
+        <div className="flex flex-col md:flex-row justify-center items-center gap-6">
+          {/* City A */}
+          <div className="flex flex-col items-center">
+            <label className="font-semibold text-teal-700 mb-2">Select City A:</label>
+            <select
+              value={cityA}
+              onChange={(e) => setCityA(e.target.value)}
+              className="p-3 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-teal-50 text-teal-900"
+            >
+              {indianCities.map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <span className="text-teal-600 text-xl">🔁</span>
+
+          {/* City B */}
+          <div className="flex flex-col items-center">
+            <label className="font-semibold text-teal-700 mb-2">Select City B:</label>
+            <select
+              value={cityB}
+              onChange={(e) => setCityB(e.target.value)}
+              className="p-3 border border-teal-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-teal-50 text-teal-900"
+            >
+              {indianCities.map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
-      <POITrends cityA={cityA} cityB={cityB} />
-    </div>
 
+      {/* Travel Trends Component */}
+      <div className="mt-8">
+        <POITrends cityA={cityA} cityB={cityB} />
+      </div>
+    </div>
 
       </main>
     </div>

@@ -33,7 +33,7 @@ const POITrends = ({ cityA, cityB }) => {
 
     return (
         <div className="p-4 bg-white shadow-lg rounded-xl">
-            <h2 className="text-xl font-semibold mb-4">Trend Comparison: {cityA} vs {cityB}</h2>
+            <h2 className="text-xl font-semibold mb-4"> Travel Trend Comparison: {cityA} vs {cityB}</h2>
             <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={trendData}>
                     <XAxis dataKey="date" />
