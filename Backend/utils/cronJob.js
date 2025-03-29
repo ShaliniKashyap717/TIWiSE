@@ -1,8 +1,8 @@
 const cron = require('cron');
 const { sendScheduledEmails } = require('../services/newsletterService');
 
-// Run every 2 minutes
-const newsletterJob = new cron.CronJob('*/1 * * * *', async () => {
+// Run every 10 minutes
+const newsletterJob = new cron.CronJob('*/10 * * * *', async () => {
   console.log('Running newsletter job...');
   try {
     const result = await sendScheduledEmails();
