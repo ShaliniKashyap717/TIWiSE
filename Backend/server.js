@@ -9,7 +9,7 @@ const newsletterJob = require('./utils/cronJob')
 require('dotenv').config();
 require('./Models/db');
 
-const PORT=process.env.PORT||8000
+const PORT=process.env.PORT||5000
 
 app.get('/ping',(req,res)=>{
     res.send('PONG');
@@ -45,7 +45,7 @@ app.get("/trends", (req, res) => {
         try {
             console.log("Trends Data Sent to Frontend:", stdout);  // Debugging log
             const data = JSON.parse(stdout);  // Ensure JSON is valid
-            res.json(data);
+           return res.json(data);
         } catch (parseError) {
             console.error("JSON Parsing Error:", parseError.message);
             res.status(500).json({ error: "Invalid JSON response from Python script." });
