@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -21,48 +21,62 @@ ChartJS.register(
   Legend
 );
 
+const cities = ['Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata', 'Hyderabad', 'Pune'];
+
+// Function to generate realistic random prices with a max difference of 1000
+const generateRandomData = () => {
+  let prices = [Math.floor(Math.random() * 2000) + 3000]; // Start with a random price between 3000-5000
+
+  for (let i = 1; i < 10; i++) {
+    let change = Math.floor(Math.random() * 1000) - 500; // Random change between -500 and +500
+    let newPrice = Math.max(2500, Math.min(prices[i - 1] + change, 5000)); // Keep price within 2500-5000
+    prices.push(newPrice);
+  }
+
+  return prices;
+};
+
 const CompetitorPriceComparison = () => {
-  const [dataType, setDataType] = useState('flights'); // Default to flights
-  const [fromCity, setFromCity] = useState('');
-  const [toCity, setToCity] = useState('');
+  const [dataType, setDataType] = useState('flights');
+  const [fromCity, setFromCity] = useState('Delhi');
+  const [toCity, setToCity] = useState('Mumbai');
+  const [competitorData, setCompetitorData] = useState(null);
 
-  const cities = ['Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata'];
-
-  // Dummy data for competitor prices
-  const [competitorData, setCompetitorData] = useState({
-    labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7', 'Day 8', 'Day 9', 'Day 10'],
-    datasets: [
-      {
-        label: 'Cleartrip',
-        data: [4200, 4300, 4100, 4400, 4500, 4350, 4250, 4400, 4300, 4200],
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-      },
-      {
-        label: 'MakeMyTrip',
-        data: [4500, 4600, 4400, 4700, 4800, 4650, 4550, 4700, 4600, 4500],
-        borderColor: 'rgb(54, 162, 235)',
-        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-      },
-      {
-        label: 'Yatra',
-        data: [4350, 4450, 4250, 4550, 4650, 4500, 4400, 4550, 4450, 4350],
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: 'rgba(75, 192, 192, 0.5)',
-      },
-    ],
-  });
+  useEffect(() => {
+    const newData = {
+      labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7', 'Day 8', 'Day 9', 'Day 10'],
+      datasets: [
+        {
+          label: 'Cleartrip',
+          data: generateRandomData(),
+          borderColor: 'rgb(255, 99, 132)',
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+        {
+          label: 'MakeMyTrip',
+          data: generateRandomData(),
+          borderColor: 'rgb(54, 162, 235)',
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        },
+        {
+          label: 'Yatra',
+          data: generateRandomData(),
+          borderColor: 'rgb(75, 192, 192)',
+          backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        },
+      ],
+    };
+    setCompetitorData(newData);
+  }, [fromCity, toCity]);
 
   const options = {
     responsive: true,
-    aspectRatio: 1.5, 
+    aspectRatio: 1.5,
     plugins: {
-      legend: {
-        position: 'top',
-      },
+      legend: { position: 'top' },
       title: {
         display: true,
-        text: `Competitor Prices for ${dataType.charAt(0).toUpperCase() + dataType.slice(1)} ${fromCity && toCity ? `(${fromCity} to ${toCity})` : ''}`,
+        text: `Competitor Prices for ${dataType.charAt(0).toUpperCase() + dataType.slice(1)} (${fromCity} to ${toCity})`,
       },
     },
   };
@@ -71,14 +85,10 @@ const CompetitorPriceComparison = () => {
     <section className="bg-white rounded-xl shadow p-6 h-full">
       <h2 className="text-xl font-semibold mb-4">Get the cheapest possible deal!</h2>
 
-    
       <div className="mb-4">
-        <label htmlFor="dataType" className="block text-gray-700 text-sm font-bold mb-2">
-         Flights
-        </label>
+        <label className="block text-gray-700 text-sm font-bold mb-2">Flights</label>
         <select
-          id="dataType"
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
           value={dataType}
           onChange={(e) => setDataType(e.target.value)}
         >
@@ -88,20 +98,15 @@ const CompetitorPriceComparison = () => {
         </select>
       </div>
 
-  
       {dataType === 'flights' && (
         <div className="flex gap-4 mb-4">
           <div>
-            <label htmlFor="fromCity" className="block text-gray-700 text-sm font-bold mb-2">
-             Delhi
-            </label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">From:</label>
             <select
-              id="fromCity"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
               value={fromCity}
               onChange={(e) => setFromCity(e.target.value)}
             >
-              <option value="">Bangalore</option>
               {cities.map((city) => (
                 <option key={city} value={city}>
                   {city}
@@ -111,16 +116,12 @@ const CompetitorPriceComparison = () => {
           </div>
 
           <div>
-            <label htmlFor="toCity" className="block text-gray-700 text-sm font-bold mb-2">
-              To:
-            </label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">To:</label>
             <select
-              id="toCity"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
               value={toCity}
               onChange={(e) => setToCity(e.target.value)}
             >
-              <option value="">Select City</option>
               {cities.map((city) => (
                 <option key={city} value={city}>
                   {city}
@@ -131,9 +132,11 @@ const CompetitorPriceComparison = () => {
         </div>
       )}
 
-      <div className="h-[calc(100%-200px)]"> {/* Adjust height calculation */}
-        <Line options={options} data={competitorData} />
-      </div>
+      {competitorData && (
+        <div className="h-[calc(100%-200px)]">
+          <Line options={options} data={competitorData} />
+        </div>
+      )}
     </section>
   );
 };
