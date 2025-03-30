@@ -25,6 +25,8 @@ function Login() {
 
         try {
             const url = "http://localhost:5000/auth/login";
+          
+
             const response = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -33,7 +35,7 @@ function Login() {
 
             const result = await response.json();
             console.log("Response:", result);
-            const { success, message, jwtToken, name, error } = result;
+            const { success, message, jwtToken, name,avatar, error,user } = result;
 
             if (response.status === 409) {
                 return handleError("User already exists. Please login.");
@@ -42,7 +44,25 @@ function Login() {
             if (response.ok && result.success) {
                 handleSuccess(result.message);
                 localStorage.setItem('token', jwtToken);
-                localStorage.setItem('loggedInUser', name);
+
+                if (name) {
+                    localStorage.setItem('loggedInUser', name);
+                    console.log("✅ Saved Name in LocalStorage:", name); // 👈 Yaha add karo
+                  } else {
+                    console.warn("⚠ Warning: No Name Found in Response!", result);
+                  }
+                localStorage.setItem('userAvatar', avatar || "https://i.pravatar.cc/150");
+              
+    
+    // ✅ Pura user object save karo
+            if (result.user) {
+                localStorage.setItem('user', JSON.stringify(result.user)); 
+                console.log("✅ User Saved:", result.user); // Debugging
+            } else {
+                console.warn("⚠ Warning: No User Data Found!");
+            }
+    
+    
                 setTimeout(() => navigate('/home'), 1000);
             } else if (error) {
                 const details = error?.details[0].message;
@@ -53,7 +73,7 @@ function Login() {
                 handleError(result.message || "Signup failed, please try again.");
             }
         } catch (err) {
-            console.error("Signup Error:", err);
+            console.error("login Error:", err);
             handleError("Something went wrong! Please try again.");
         }
     };

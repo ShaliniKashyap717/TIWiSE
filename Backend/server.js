@@ -6,6 +6,10 @@ const AuthRouter = require('./routes/authRoutes.js');
 const { exec } = require("child_process");
 const subscriberRoutes= require('./routes/subscriberRoutes.js')
 const newsletterJob = require('./utils/cronJob')
+
+
+
+
 require('dotenv').config();
 require('./Models/db');
 
@@ -52,6 +56,8 @@ app.get("/trends", (req, res) => {
         }
     });
 });
+
+
 
 
 app.listen(PORT,()=>{
