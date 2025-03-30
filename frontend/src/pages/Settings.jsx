@@ -61,10 +61,14 @@ const Settings = () => {
       console.log("🔹 Updated User Data:", user);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
       const response = await fetch("http://localhost:5000/auth/profile", {
 =======
       const response = await fetch("http://localhost:8080/auth/profile", {
 >>>>>>> 90a1a004 (commit)
+=======
+      const response = await fetch("http://localhost:5000/auth/profile", {
+>>>>>>> 51060c86 (commit)
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
