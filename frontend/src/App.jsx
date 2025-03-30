@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import { Routes, Route } from "react-router-dom"; 
 import { Toaster } from "./components/ui/sonner";
 import Dashboard from './pages/Dashboard'
@@ -14,19 +14,29 @@ import Home from "./pages/Home";
 import Signup from "./pages/Signup"; 
 import Login from './pages/Login'; 
  
+  
+import RefreshHandler from "./components/RefreshHandler";
 
 
 import { Navigate } from "react-router-dom";
 
-const App = () => (
-  <>
+function App(){
+    const [isAuthenticated,setIsAuthenticated]=useState(false);
+    const PrivateRoute=({element})=>{
+      return isAuthenticated? element: <Navigate to="/login"/>
+    }
+
+
+  return(
+    <>
     <Toaster position="top-right" />
+    <RefreshHandler setIsAuthenticated={setIsAuthenticated}/>
     <Routes>
       <Route path='/' element={<Navigate to="/login"/>} />
       <Route path='/login' element={<Login/>} />
       <Route path='/signup' element={<Signup/>} />
       <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/home" element={<Home/>} />
+      <Route path="/home" element={<PrivateRoute element={<Home/>} />}/>
       <Route path="/profile" element={<Profile />} />
       <Route path="/expenses" element={<Expenses />} />
       <Route path="/safe-places" element={<SafePlaces />} />
@@ -37,6 +47,7 @@ const App = () => (
       <Route path="*" element={<NotFound />} />
     </Routes>
   </>
-);
+  );
+};
 
 export default App;

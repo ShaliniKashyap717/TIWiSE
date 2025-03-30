@@ -9,6 +9,7 @@ function Signup() {
         name: '',
         email: '',
         password: '',
+        phone_no:''
     });
 
     const navigate = useNavigate();
@@ -20,9 +21,9 @@ function Signup() {
 
     const handleSignup = async (e) => {
         e.preventDefault();
-        const { name, email, password } = signupInfo;
+        const { name, email, password ,phone_no} = signupInfo;
 
-        if (!name || !email || !password) {
+        if (!name || !email || !password||!phone_no) {
             return handleError('Name, email, and password are required');
         }
         
@@ -87,6 +88,17 @@ function Signup() {
                             placeholder="Enter your email..."
                             className="text-lg p-2 outline-none border border-gray-300 rounded-md placeholder:text-gray-500 placeholder:italic focus:ring-2 focus:ring-teal-600"
                             value={signupInfo.email}
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <label htmlFor="email" className="text-lg font-medium mb-1">Phone no.</label>
+                        <input
+                            onChange={handleChange}
+                            type="number"
+                            name="phone_no"
+                            placeholder="Enter your phone no."
+                            className="text-lg p-2 outline-none border border-gray-300 rounded-md placeholder:text-gray-500 placeholder:italic focus:ring-2 focus:ring-teal-600"
+                            value={signupInfo.phone_no}
                         />
                     </div>
                     <div className="flex flex-col">
