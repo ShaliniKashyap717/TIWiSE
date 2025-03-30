@@ -60,7 +60,7 @@ const Settings = () => {
       console.log("🔹 Sending Request with Token:", token);
       console.log("🔹 Updated User Data:", user);
 
-      const response = await fetch("http://localhost:8080/auth/profile", {
+      const response = await fetch("http://localhost:5000/auth/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
