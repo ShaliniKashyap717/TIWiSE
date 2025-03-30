@@ -7,7 +7,6 @@ import 'react-toastify/ReactToastify.css';
 import 'leaflet/dist/leaflet.css';
  
 
-
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>  {/* ✅ Router is only here! */}
@@ -15,3 +14,7 @@ createRoot(document.getElementById("root")!).render(
     </BrowserRouter>
   </React.StrictMode>
 );
+
+
+
+
