@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
+const cache = {};
 
 const POITrends = ({ cityA, cityB }) => {
     const [trendData, setTrendData] = useState([]);
@@ -9,11 +10,19 @@ const POITrends = ({ cityA, cityB }) => {
     console.log("Backend URL:", backendUrl); // Debugging
     
     useEffect(() => {
+        const key = `${cityA}_${cityB}`;
+    
         if (!backendUrl) {
             console.error("Backend URL is not defined in .env file.");
             return;
         }
-
+    
+        // Check if we already have cached data
+        if (cache[key]) {
+            setTrendData(cache[key]);
+            return;
+        }
+    
         fetch(`${backendUrl}/trends?cityA=${cityA}&cityB=${cityB}`)
             .then(response => response.json())
             .then(data => {
@@ -25,12 +34,14 @@ const POITrends = ({ cityA, cityB }) => {
                         [cityA]: data.cityA[index],
                         [cityB]: data.cityB[index],
                     }));
+    
+                    cache[key] = formattedData;
                     setTrendData(formattedData);
                 }
             })
             .catch(error => console.error("Error fetching trends:", error));
     }, [cityA, cityB, backendUrl]);
-
+    
     return (
         <div className="p-4 bg-white shadow-lg rounded-xl">
             <h2 className="text-xl font-semibold mb-4"> Travel Trend Comparison: {cityA} vs {cityB}</h2>

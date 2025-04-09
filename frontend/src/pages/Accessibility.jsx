@@ -213,7 +213,7 @@ useEffect(() => {
 
 {/* Voice Navigation - full width */}
 <div className="mt-6">
-  <div className={`${cardClass} w-full`}>
+  {/* <div className={`${cardClass} w-full`}>
     <h3 className="text-lg font-semibold mb-3">🎯 Voice Navigation</h3>
     <input
       type="text"
@@ -223,7 +223,7 @@ useEffect(() => {
       className={inputClass}
     />
     <button className={buttonClass}>Submit</button>
-  </div>
+  </div> */}
 </div>
 <div className="mt-10">
 
