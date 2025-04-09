@@ -19,6 +19,7 @@ import RefreshHandler from "./components/RefreshHandler";
 
 
 import { Navigate } from "react-router-dom";
+import Sustainability from "./pages/Sustainability";
 
 function App(){
     const [isAuthenticated,setIsAuthenticated]=useState(false);
@@ -44,6 +45,8 @@ function App(){
       <Route path="/accessibility" element={<Accessibility />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/newsletter" element={<Newsletter />} /> 
+      <Route path="/sustainability" element={<Sustainability/>}/>
+    
       <Route path="*" element={<NotFound />} />
     </Routes>
   </>

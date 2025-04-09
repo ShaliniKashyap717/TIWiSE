@@ -9,7 +9,8 @@ import {
   Users, 
   Accessibility, 
   Shield, 
-  LogOut
+  LogOut,
+  Leaf
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -47,6 +48,12 @@ const Sidebar = () => {
           </svg>
           <span>Newsletter</span>
         </NavLink>
+
+        <NavLink to="/sustainability" className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''} mt-2`}>
+           <Leaf size={20} />
+           <span>Sustainability</span>
+       </NavLink>
+
         
         <NavLink to="/social-connect" className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''} mt-2`}>
           <Users size={20} />
