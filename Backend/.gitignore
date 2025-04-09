@@ -27,3 +27,5 @@ dump.sql
 # Build files
 dist/
 coverage/
+
+gtfs.db
