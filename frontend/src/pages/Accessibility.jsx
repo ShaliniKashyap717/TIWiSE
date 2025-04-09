@@ -1,6 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
-import { FaMicrophone, FaVolumeUp, FaWheelchair, FaSun, FaMoon, FaBars, FaArrowLeft } from 'react-icons/fa';
+import {
+  FaMicrophone, FaVolumeUp, FaWheelchair,
+  FaSun, FaMoon, FaBars, FaArrowLeft
+} from 'react-icons/fa';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import SpeechToText from '../components/SpeechToText';
+import ImageUploader from '../components/AcessibilityChecker/ImageUploader';
+import ResultDisplay from '../components/AcessibilityChecker/ResultDisplay';
+
+
+// Fix default marker icons
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 const Accessibility = () => {
   const [voiceCommand, setVoiceCommand] = useState('');
@@ -9,144 +31,205 @@ const Accessibility = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
+  const [wheelchairStops, setWheelchairStops] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [results, setResults] = useState(null);
 
-  // Toggle sidebar visibility
-  const toggleSidebar = () => setShowSidebar(!showSidebar);
+  
 
-  // Toggle dark mode / high contrast mode
-  const toggleContrast = () => setHighContrast(!highContrast);
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/wheelchair-stops`)
+      .then(res => res.json())
+      .then(data => {
+        console.log('Fetched wheelchair stops:', data);
+        setWheelchairStops(data.accessibleStops || []);
+      })
+      .catch(err => console.error('Error fetching data:', err));
+  }, []);
 
-  // Dynamic styles
-  const containerClass = highContrast ? 'bg-black text-yellow-300' : 'bg-gray-50';
-  const cardClass = highContrast 
-    ? 'bg-gray-900 text-yellow-300 border border-yellow-400 shadow-lg' 
-    : 'bg-white text-black shadow-md';
-  const buttonClass = highContrast 
-    ? 'bg-yellow-500 text-black hover:bg-yellow-400' 
-    : 'bg-teal-600 text-white hover:bg-teal-700';
-  const inputClass = highContrast 
-    ? 'bg-gray-800 text-yellow-300 border border-yellow-500' 
-    : 'bg-white text-black border border-gray-300';
 
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+
+useEffect(() => {
+  if (!recognition) return;
+
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = 'en-US';
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    setSpeechInput(transcript);
+    setIsListening(false);
+  };
+
+  recognition.onerror = (event) => {
+    console.error('Speech recognition error:', event.error);
+    setIsListening(false);
+  };
+
+  recognition.onend = () => setIsListening(false);
+}, []);
+
+
+  const filteredStops = wheelchairStops.filter(stop =>
+    stop.stop_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const percentageAccessible = wheelchairStops.length > 0 ? 100 : 0;
+
+  const cardClass = "bg-white p-4 rounded-lg shadow w-full";
+  const inputClass = "w-full border border-gray-300 rounded px-3 py-2 mb-2 focus:outline-none focus:ring-2 focus:ring-teal-500";
+  const buttonClass = "bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 transition";
+  
   return (
-    <div className={`flex h-screen ${containerClass}`}>
-      {/* Sidebar - Conditional Rendering */}
+    <div className="flex h-screen bg-teal-50 text-gray-800">
+      {/* Sidebar */}
       <div className={`transition-all duration-300 ${showSidebar ? 'w-64' : 'w-0'} overflow-hidden`}>
         {showSidebar && <Sidebar />}
       </div>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-6 transition-all duration-300">
-        <div className="flex justify-between items-center mb-4">
-          {/* Sidebar Toggle Button */}
-          <button onClick={toggleSidebar} className="p-2 rounded-full border-2 border-gray-700">
+      {/* Main */}
+      <main className="flex-1 overflow-y-auto p-6">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <button onClick={() => setShowSidebar(!showSidebar)} className="p-2 rounded-full border border-teal-700">
             {showSidebar ? <FaArrowLeft size={20} /> : <FaBars size={20} />}
           </button>
-
-          <h1 className="text-3xl font-semibold text-center flex-1">AI-Powered Accessibility Assistant</h1>
-          
-          {/* Dark Mode Toggle */}
-          <button onClick={toggleContrast} className="p-2 rounded-full border-2 border-gray-700">
+          <h1 className="text-3xl font-bold text-center flex-1">AI-Powered Accessibility Assistant</h1>
+          <button onClick={() => setHighContrast(!highContrast)} className="p-2 rounded-full border border-teal-700">
             {highContrast ? <FaSun size={20} /> : <FaMoon size={20} />}
           </button>
         </div>
 
-        <p className="text-center text-lg mb-6">
-          <em>"The world is a book, and those who do not travel read only one page." - Saint Augustine</em>
-        </p>
+        {/* Top section: Map and Dashboard */}
+        <div className="grid md:grid-cols-3 gap-6 mb-6">
+          {/* Map */}
+          <div className="md:col-span-2">
+            <div className={`${cardClass}`}>
+              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                <FaWheelchair /> Wheelchair-Friendly Stops
+              </h3>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by stop name"
+                className={`${inputClass} mb-3`}
+              />
+              <p className="text-sm text-gray-600 mb-2">
+                Showing {filteredStops.length} of {wheelchairStops.length} accessible stops.
+              </p>
+              <div className="h-[400px] rounded overflow-hidden border border-gray-300">
+                <MapContainer center={[38.978, -76.496]} zoom={13} className="h-full w-full">
+                  <TileLayer
+                    attribution='&copy; <a href="https://osm.org">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  {filteredStops.map((stop, index) => {
+                    console.log(`Placing marker at: ${stop.stop_name} →`, stop.stop_lat, stop.stop_lon);
+                    return (
+                      <Marker
+                        key={index}
+                        position={[parseFloat(stop.stop_lat), parseFloat(stop.stop_lon)]}
+                      >
+                        <Popup>
+                          <strong>{stop.stop_name}</strong><br />
+                          ID: {stop.stop_id}
+                        </Popup>
+                      </Marker>
+                    );
+                  })}
+                </MapContainer>
+              </div>
+            </div>
+          </div>
 
-        {/* Features Grid */}
+          {/* Dashboard */}
+<div className={`${cardClass} flex flex-col justify-between`}>
+  <div>
+    <h2 className="text-2xl font-bold mb-4 text-teal-700">Accessibility Impact</h2>
+
+    <p className="text-gray-700 text-lg font-medium mb-2">
+      ♿ Total Wheelchair-Accessible Stops:
+      <span className="text-teal-800 font-bold ml-1">{wheelchairStops.length}</span>
+    </p>
+
+    <p className="text-sm text-gray-600 mb-4">
+      Every accessible stop brings us one step closer to inclusive public transit for all.
+    </p>
+
+    <div className="bg-teal-100 p-3 rounded-md text-sm text-gray-700">
+      🚏 Explore the map to find accessible transit stops in your area.
+    </div>
+  </div>
+
+  <blockquote className="mt-6 italic text-gray-600 border-l-4 border-teal-400 pl-4 text-sm">
+    “Accessibility is not a feature. It’s a social trend.” — Antonio Santos
+  </blockquote>
+</div>
+        </div>
+
+        {/* Bottom section: Features */}
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Voice Navigation */}
-          <div className={`${cardClass} p-6 rounded-lg`}>
-            <h3 className="text-lg font-semibold mb-3">Voice Navigation</h3>
-            <input
-              type="text"
-              value={voiceCommand}
-              onChange={(e) => setVoiceCommand(e.target.value)}
-              placeholder="Enter your command..."
-              className={`${inputClass} rounded p-2 w-full`}
-              aria-label="Voice command input"
-            />
-            <button className={`${buttonClass} w-full mt-3 p-2 rounded-md`}>Submit</button>
-            <p className="text-sm mt-4 text-gray-600">
-              <em>"Travel is more than the seeing of sights; it is a change that goes on, deep and permanent, in the ideas of living." - Miriam Beard</em>
-            </p>
-          </div>
+  {/* Speech to Text */}
+  <SpeechToText />
 
-          {/* Text-to-Speech */}
-          <div className={`${cardClass} p-6 rounded-lg`}>
-            <h3 className="text-lg font-semibold mb-3">Text-to-Speech</h3>
-            <textarea
-              value={textToRead}
-              onChange={(e) => setTextToRead(e.target.value)}
-              placeholder="Enter text to read aloud..."
-              className={`${inputClass} rounded p-2 w-full`}
-              rows={3}
-              aria-label="Text to speech input"
-            />
-            <button className={`${buttonClass} w-full mt-3 p-2 rounded-md`}>
-              {isSpeaking ? 'Speaking...' : 'Read Aloud'}
-            </button>
-            <p className="text-sm mt-4 text-gray-600">
-              <em>"The journey of a thousand miles begins with a single step." - Lao Tzu</em>
-            </p>
-          </div>
+  {/* Text to Speech */}
+  <div className={`${cardClass}`}>
+    <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+      <FaVolumeUp /> Text-to-Speech
+    </h3>
+    <textarea
+      value={textToRead}
+      onChange={(e) => setTextToRead(e.target.value)}
+      placeholder="Enter text to read aloud..."
+      className={`${inputClass} h-24`}
+    />
+    <button
+      className={buttonClass}
+      onClick={() => {
+        if (!textToRead.trim()) return;
 
-          {/* Speech-to-Text */}
-          <div className={`${cardClass} p-6 rounded-lg`}>
-            <h3 className="text-lg font-semibold mb-3">Speech-to-Text</h3>
-            <input
-              type="text"
-              value={speechInput}
-              onChange={(e) => setSpeechInput(e.target.value)}
-              placeholder="Say something..."
-              className={`${inputClass} rounded p-2 w-full`}
-              aria-label="Speech to text input"
-            />
-            <button className={`${buttonClass} w-full mt-3 p-2 rounded-md`}>Convert</button>
-            <p className="text-sm mt-4 text-gray-600">
-              <em>"Wherever you go becomes a part of you somehow." - Anita Desai</em>
-            </p>
-          </div>
+        const utterance = new SpeechSynthesisUtterance(textToRead);
+        utterance.lang = 'en-US';
+        utterance.pitch = 1;
+        utterance.rate = 1;
+        utterance.volume = 1;
 
-          {/* Wheelchair-Friendly Routes */}
-          <div className={`${cardClass} p-6 rounded-lg`}>
-            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-              <FaWheelchair /> Wheelchair-Friendly Routes
-            </h3>
-            <input
-              type="text"
-              placeholder="Enter destination..."
-              className={`${inputClass} rounded p-2 w-full`}
-              aria-label="Wheelchair accessible route input"
-            />
-            <button className={`${buttonClass} w-full mt-3 p-2 rounded-md`}>Find Routes</button>
-            <p className="text-sm mt-4 text-gray-600">
-              <em>"Travel far, travel wide, and travel often. Understand that everyone you meet is afraid of something, loves something, and has lost something." - H. Jackson Brown Jr.</em>
-            </p>
-          </div>
-        </div>
+        utterance.onstart = () => setIsSpeaking(true);
+        utterance.onend = () => setIsSpeaking(false);
 
-        {/* Compliance Section */}
-        <div className="text-center mt-6">
-          <h2 className="font-semibold">Compliance & Standards</h2>
-          <p className="mt-2 text-sm flex justify-center gap-4">
-            <span className="text-teal-500">WCAG 2.1 AAA</span>
-            <span className="text-gray-500">Section 508</span>
-            <span className="text-teal-500">ADA Compliant</span>
-          </p>
-          <p className="text-lg mt-4">
-            <em>"The world is full of magic things, patiently waiting for our senses to grow sharper." - W.B. Yeats</em>
-          </p>
-        </div>
+        window.speechSynthesis.speak(utterance);
+      }}
+      disabled={isSpeaking}
+    >
+      {isSpeaking ? 'Speaking...' : 'Read Aloud'}
+    </button>
+  </div>
+</div>
 
-        {/* Inspirational Quote */}
-        <div className="text-center mt-6">
-          <p className="text-lg">
-            <em>"Jobs fill your pocket, but adventures fill your soul." - Jaime Lyn Beatty</em>
-          </p>
-        </div>
+{/* Voice Navigation - full width */}
+<div className="mt-6">
+  <div className={`${cardClass} w-full`}>
+    <h3 className="text-lg font-semibold mb-3">🎯 Voice Navigation</h3>
+    <input
+      type="text"
+      value={voiceCommand}
+      onChange={(e) => setVoiceCommand(e.target.value)}
+      placeholder="Enter your command..."
+      className={inputClass}
+    />
+    <button className={buttonClass}>Submit</button>
+  </div>
+</div>
+<div className="mt-10">
+
+      <ImageUploader onResults={setResults} />
+      {/* {results && <ResultDisplay results={results} />} */}
+</div>
       </main>
     </div>
   );

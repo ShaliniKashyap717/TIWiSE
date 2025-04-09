@@ -7,8 +7,46 @@ const { exec } = require("child_process");
 const subscriberRoutes= require('./routes/subscriberRoutes.js')
 const newsletterJob = require('./utils/cronJob')
 
+const cron = require('node-cron'); 
+const geminiRoutes = require('./routes/geminiRoutes');
 
 
+let importGtfs;
+let getStops;
+
+// Immediately-invoked async function to load GTFS
+(async () => {
+  try {
+    const gtfsModule = await import('gtfs');
+    // Correctly extract methods from ES module
+    importGtfs = gtfsModule.importGtfs;
+    getStops = gtfsModule.getStops;
+
+    const gtfsConfig = require('./config/gtfs-config.json');
+    
+    // Initialize GTFS data
+    const refreshGTFSData = async () => {
+      try {
+        await importGtfs(gtfsConfig);
+        console.log('GTFS data refreshed successfully');
+      } catch (error) {
+        console.error('GTFS import failed:', error);
+      }
+    };
+
+    // Initial refresh
+    await refreshGTFSData();
+
+    // Schedule daily refresh
+    cron.schedule('0 3 * * *', () => {
+      console.log('Running daily GTFS data refresh');
+      refreshGTFSData();
+    });
+
+  } catch (error) {
+    console.error('Failed to initialize GTFS:', error);
+  }
+})();
 
 require('dotenv').config();
 require('./Models/db');
@@ -28,7 +66,44 @@ app.use(cors());
 app.use('/auth',AuthRouter);
 app.use('/api/subscribers', subscriberRoutes);
 
+const wheelchairRoute = require('./routes/gtfs'); // path may vary
+app.use('/api', wheelchairRoute);
+
+app.get('/api/stops', async (req, res) => {
+    try {
+      if (!getStops) throw new Error('GTFS not initialized');
+  
+      const accessibleStops = await getStops({ wheelchair_boarding: 1 });
+      const allStops = await getStops();
+  
+      console.log(`Accessible Stops: ${accessibleStops.length}`);
+      console.log(`Total Stops: ${allStops.length}`);
+  
+      res.json({ accessibleStops, totalStops: allStops.length });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to fetch stops: ' + error.message });
+    }
+  });
+  app.use('/api/gemini', geminiRoutes);
+  
+  
+
 newsletterJob.start();
+
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('./gtfs.db');
+
+db.all('SELECT stop_id, stop_name, wheelchair_boarding FROM stops LIMIT 10', [], (err, rows) => {
+  if (err) {
+    console.error(err.message);
+    return;
+  }
+  console.log(rows);
+});
+
+db.close();
+
 
 
 app.get("/trends", (req, res) => {
