@@ -41,7 +41,7 @@ def fetch_trends(cityA, cityB, max_retries=5):
                 "cityB": trends_data[cityB].tolist(),
             }
 
-            print(json.dumps(result))
+            print(json.dumps(result), flush=True)
             return  # Success, exit function
 
         except Exception as e:
