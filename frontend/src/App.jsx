@@ -12,7 +12,6 @@ import Newsletter from "./pages/Newsletter";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
 import Signup from "./pages/Signup"; 
-<<<<<<< HEAD
 import Login from './pages/Login'; 
  
   
@@ -21,7 +20,6 @@ import RefreshHandler from "./components/RefreshHandler";
 
 import { Navigate } from "react-router-dom";
 import Sustainability from "./pages/Sustainability";
-=======
 import Login from './pages/Login';
 import Setup2FA from "./pages/Setup2FA";
 import Verify2FA from "./pages/verify2FA";
@@ -29,7 +27,6 @@ import Expenses from "./pages/Expenses";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { SessionProvider } from "./context/SessionContext";
 // import RefreshHandler from "./components/RefreshHandler"
->>>>>>> e0559d6e (2fa-expenseTracker)
 
 function App(){
    
@@ -56,12 +53,9 @@ function App(){
       <Route path="/accessibility" element={<Accessibility />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/newsletter" element={<Newsletter />} /> 
-<<<<<<< HEAD
       <Route path="/sustainability" element={<Sustainability/>}/>
     
-=======
       <Route path="/expenses" element={<Expenses/>} /> 
->>>>>>> e0559d6e (2fa-expenseTracker)
       <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
