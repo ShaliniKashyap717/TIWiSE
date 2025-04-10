@@ -9,6 +9,8 @@ import MoodCard from "../components/MoodCard";
 import DestinationCard from "../components/DestinationCard";
 import Chart from "./charts/Charts";
 import POITrends from "./charts/POITrends";
+import WeatherChart from "./charts/WeatherChart";
+import MapActivities from "./charts/MapActivities";
 
 const indianCities = [
   "Mumbai",
@@ -163,6 +165,12 @@ const Dashboard = () => {
       {/* Travel Trends Component */}
       <div className="mt-8">
         <POITrends cityA={cityA} cityB={cityB} />
+      </div>
+      <div >
+        <WeatherChart/>
+      </div>
+      <div>
+        <MapActivities/>
       </div>
     </div>
 
