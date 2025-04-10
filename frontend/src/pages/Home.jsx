@@ -13,6 +13,7 @@ import Footer from "../components/Footer";
 const Home = () => {
   const [selectedMood, setSelectedMood] = useState(null);
   const [movies, setMovies] = useState([]);
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const moodCategories = [
     { icon: <Waves className="text-teal-500" size={20} />, title: "Party", color: "bg-teal-100" },
@@ -25,27 +26,25 @@ const Home = () => {
 
   const fetchMovies = async (mood) => {
     try {
-      const response = await axios.get(`https://www.omdbapi.com/?s=${mood}&apikey=f688c63d`);
-      
-      if (response.data.Search) {
+      const response = await axios.get(`${BACKEND_URL}/api/movies?mood=${mood}`);
+      if (response.data && Array.isArray(response.data)) {
         const currentYear = new Date().getFullYear();
-        const filteredMovies = response.data.Search.filter((movie) => {
+        const filteredMovies = response.data.filter((movie) => {
           const movieYear = parseInt(movie.Year, 10);
           return movieYear >= currentYear - 10;
         });
-
-        if (filteredMovies.length > 3) {
-          const shuffledMovies = filteredMovies.sort(() => 0.5 - Math.random());
-          setMovies(shuffledMovies.slice(0, 3));
-        } else {
-          setMovies(filteredMovies);
-        }
-
+      
+        const moviesToShow = filteredMovies.length > 3
+          ? filteredMovies.sort(() => 0.5 - Math.random()).slice(0, 3)
+          : filteredMovies;
+      
+        setMovies(moviesToShow);
         toast.success(`Fetched movies for ${mood}!`);
       } else {
         toast.error(`No movies found for ${mood}!`);
         setMovies([]);
       }
+      
     } catch (error) {
       console.error("Error fetching movies:", error);
       toast.error("Failed to fetch movies.");

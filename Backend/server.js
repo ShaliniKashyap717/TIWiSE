@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express =require('express');
 const app=express();
 const bodyParser = require('body-parser');
@@ -9,6 +10,8 @@ const newsletterJob = require('./utils/cronJob')
 
 const cron = require('node-cron'); 
 const geminiRoutes = require('./routes/geminiRoutes');
+const movieRoutes = require("./routes/movieRoutes");
+
 
 
 let importGtfs;
@@ -48,7 +51,7 @@ let getStops;
   }
 })();
 
-require('dotenv').config();
+
 require('./Models/db');
 
 const PORT=process.env.PORT||5000
@@ -86,6 +89,7 @@ app.get('/api/stops', async (req, res) => {
     }
   });
   app.use('/api/gemini', geminiRoutes);
+  app.use("/api/movies", movieRoutes);
   
   
 

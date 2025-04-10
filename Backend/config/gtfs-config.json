@@ -52,7 +52,7 @@
         "attributions", "feed_info", "rider_categories", "areas", "booking_rules",
         "fare_leg_rules", "fare_media", "fare_products", "fare_transfer_rules",
         "frequencies", "levels", "location_group_stops", "location_groups",
-        "locations.geojson", "networks", "pathways"
+        "locations.geojson", "networks", "pathways","shapes"
       ]
     }
   ]
