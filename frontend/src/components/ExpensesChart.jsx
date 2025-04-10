@@ -20,8 +20,8 @@ const COLORS = ['#065f46', '#047857', '#059669', '#10b981', '#34d399', '#6ee7b7'
 
 const ExpensesChart = ({ expenses }) => {
   const [chartType, setChartType] = useState('bar');
-
-  const groupedData = expenses.reduce((acc, curr) => {
+  console.log("expenses",expenses)
+  const groupedData = expenses?.reduce((acc, curr) => {
     const key = curr.text || 'Unknown';
     const amt = Math.abs(curr.amount);
     if (amt === 0 || curr.amount > 0) return acc;

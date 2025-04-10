@@ -31,10 +31,10 @@ function ExpenseTracker() {
   useEffect(()=>{
     const amounts = expenses.map((item)=>item.amount);
     console.log(amounts);
-    const income = amounts.filter(item=>item>0).reduce((acc,item)=>(acc+=item),0)
+    const income = amounts.filter(item=>item>0)?.reduce((acc,item)=>(acc+=item),0)
     console.log("income: ",income);
 
-    const exp = amounts.filter(item=>item<0).reduce((acc,item)=>(acc+=item),0)*-1;
+    const exp = amounts.filter(item=>item<0)?.reduce((acc,item)=>(acc+=item),0)*-1;
     console.log("exp: ",exp);
 
     setIncomeAmt(income);
@@ -47,16 +47,17 @@ function ExpenseTracker() {
 
     try {
       const url = `${import.meta.env.VITE_BACKEND_URL}/expenses`;
-
+    
   
       const response = await fetch(url, {
+
         method: 'GET', // or 'POST', etc.
         headers: {
           'Content-Type': 'application/json'
         },
         credentials: 'include' // ✅ ensures session cookie is sent
       });
-      
+      console.log("response: ",response)
   
       if (response.status === 403) {
         navigate('/login');
