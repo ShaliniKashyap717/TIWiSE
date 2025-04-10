@@ -12,6 +12,7 @@ import {
   Legend,
 } from "chart.js";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+console.log("backendurl",BACKEND_URL)
 ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const TopFiatCurrenciesChart = () => {
@@ -22,6 +23,8 @@ const TopFiatCurrenciesChart = () => {
       try {
         //const response = await axios.get("http://localhost:5000/api/currency/top10fiat");
         const response = await axios.get(`${BACKEND_URL}/api/currency/top10fiat`);
+
+        console.log("topfiat:",response)
 
         const rates = response.data.rates;
 

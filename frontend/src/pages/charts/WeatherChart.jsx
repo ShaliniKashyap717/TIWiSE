@@ -35,6 +35,7 @@ const WeatherChart = () => {
       // Make a request to your backend
       const response = await fetch(`${BACKEND_URL}/api/weather/weather?sourceCity=${sourceCity}&destinationCity=${destinationCity}`);
       const data = await response.json();
+      console.log("weatherdata: ",data)
 
       // Check if the data is valid
       if (!Array.isArray(data) || data.length === 0) {
