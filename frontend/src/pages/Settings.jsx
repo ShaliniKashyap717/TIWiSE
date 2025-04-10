@@ -72,24 +72,13 @@ const Settings = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-<<<<<<< HEAD
+
       const token = localStorage.getItem("token");
       console.log("🔹 Sending Request with Token:", token);
       console.log("🔹 Updated User Data:", user);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-      const response = await fetch("http://localhost:5000/auth/profile", {
-=======
-      const response = await fetch("http://localhost:8080/auth/profile", {
->>>>>>> 90a1a004 (commit)
-=======
-      const response = await fetch("http://localhost:5000/auth/profile", {
->>>>>>> 51060c86 (commit)
-=======
       const response = await fetch("http://localhost:5000/auth/profile", {
         credentials: "include", // ⬅️ Add this line
->>>>>>> e0559d6e (2fa-expenseTracker)
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
