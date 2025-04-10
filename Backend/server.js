@@ -104,7 +104,9 @@ db.all('SELECT stop_id, stop_name, wheelchair_boarding FROM stops LIMIT 10', [],
 
 db.close();
 
+const NodeCache = require("node-cache");
 
+const trendCache = new NodeCache({ stdTTL: 3600 }); 
 
 app.get("/trends", (req, res) => {
     const { cityA, cityB } = req.query;
@@ -113,20 +115,29 @@ app.get("/trends", (req, res) => {
         return res.status(400).json({ error: "Please provide two cities." });
     }
 
+    const cacheKey = `${cityA.toLowerCase()}_${cityB.toLowerCase()}`;
+    const cachedData = trendCache.get(cacheKey);
+
+    if (cachedData) {
+        console.log("✅ Returning cached data");
+        return res.json(cachedData);
+    }
+
     const command = `python trends.py "${cityA}" "${cityB}"`;
 
     exec(command, (error, stdout, stderr) => {
         if (error) {
-            console.error("Google Trends API Error:", stderr);
+            console.error("❌ Google Trends API Error:", stderr);
             return res.status(500).json({ error: "Failed to fetch trends." });
         }
 
         try {
-            console.log("Trends Data Sent to Frontend:", stdout);  // Debugging log
-            const data = JSON.parse(stdout);  // Ensure JSON is valid
+            const data = JSON.parse(stdout);
+            trendCache.set(cacheKey, data); // Save result to cache
+            console.log("📡 New data fetched & cached");
             res.json(data);
         } catch (parseError) {
-            console.error("JSON Parsing Error:", parseError.message);
+            console.error("⚠️ JSON Parsing Error:", parseError.message);
             res.status(500).json({ error: "Invalid JSON response from Python script." });
         }
     });

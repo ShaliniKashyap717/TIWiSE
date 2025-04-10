@@ -93,13 +93,13 @@ const GreenDestinationMap = () => {
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
   
   useEffect(() => {
-    // Update time every minute to simulate "real-time" data
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
-    }, 60000);
-    
-    return () => clearInterval(interval);
+    }, 1000);
+  
+    return () => clearInterval(interval); 
   }, []);
+  
 
   return (
     <div className="space-y-6">
@@ -113,43 +113,44 @@ const GreenDestinationMap = () => {
           </span>
         </h3>
         
-        <div className="mb-4" style={{ height: '500px' }}>
-          {/* Using a key with currentTime ensures the map reloads when needed */}
-          <MapContainer 
-            key={`map-${greenDestinations.length}`}
-            center={[20, 0]} 
-            zoom={2} 
-            scrollWheelZoom={true}
-            style={{ height: '100%', width: '100%' }}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            {greenDestinations.map(destination => (
-              <Marker 
-                key={destination.id} 
-                position={destination.position}
-                icon={customIcon}
-              >
-                <Popup>
-                  <div className="font-medium">{destination.name}</div>
-                  <div className="text-xs text-gray-600 mb-1">{destination.certification}</div>
-                  <div className="text-sm text-gray-600">{destination.description}</div>
-                  <div className="mt-1 text-xs">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                      destination.rating === 'High' ? 'bg-green-100 text-green-800' :
-                      destination.rating === 'Medium' ? 'bg-blue-100 text-blue-800' :
-                      'bg-amber-100 text-amber-800'
-                    }`}>
-                      {destination.rating} Sustainability
-                    </span>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
-        </div>
+        <div className="h-[500px] w-full rounded-2xl shadow-md overflow-hidden z-10">
+  <MapContainer 
+    key={`map-${greenDestinations.length}`}
+    center={[20, 0]} 
+    zoom={2} 
+    scrollWheelZoom={true}
+    style={{ height: '100%', width: '100%' }}
+  >
+    <TileLayer
+      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    />
+    
+    {greenDestinations.map(destination => (
+      <Marker 
+        key={destination.id} 
+        position={destination.position}
+        icon={customIcon}
+      >
+        <Popup>
+          <div className="font-medium">{destination.name}</div>
+          <div className="text-xs text-gray-600 mb-1">{destination.certification}</div>
+          <div className="text-sm text-gray-600">{destination.description}</div>
+          <div className="mt-1 text-xs">
+            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+              destination.rating === 'High' ? 'bg-green-100 text-green-800' :
+              destination.rating === 'Medium' ? 'bg-blue-100 text-blue-800' :
+              'bg-amber-100 text-amber-800'
+            }`}>
+              {destination.rating} Sustainability
+            </span>
+          </div>
+        </Popup>
+      </Marker>
+    ))}
+  </MapContainer>
+</div>
+
         
         <div>
           <div className="text-sm text-gray-600 text-center mb-2">

@@ -60,7 +60,7 @@ const CarbonOffsetPrograms = () => {
                 <h4 className="text-lg font-semibold mb-2">{program.title}</h4>
                 <p className="text-gray-600 text-sm mb-4">{program.description}</p>
                 <button 
-                className="text-teal-700 font-medium hover:text-teal-900 text-sm"
+                className="text-teal-700 font-medium hover:text-teal-00 text-sm"
                 onClick={() => handleLearnMore(program.link)}
 >
   Learn More
