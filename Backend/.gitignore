@@ -26,6 +26,10 @@ dump.sql
 
 # Build files
 dist/
+<<<<<<< HEAD
 coverage/
 
 gtfs.db
+=======
+coverage/
+>>>>>>> e0559d6e (2fa-expenseTracker)
