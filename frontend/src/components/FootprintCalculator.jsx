@@ -284,11 +284,7 @@ const FootprintCalculator = ({ onCalculate }) => {
             <p className="text-muted-foreground mb-4">
               Submit travel details to see your carbon footprint
             </p>
-            <img 
-              src="public/lovable-uploads/e16f24be-1bd3-447e-a302-28121da9ba53.png" 
-              alt="Carbon Footprint" 
-              className="w-20 h-20 opacity-40"
-            />
+            
           </div>
         )}
       </div>
