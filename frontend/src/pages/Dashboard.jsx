@@ -53,7 +53,8 @@ const Dashboard = () => {
   const [cityB, setCityB] = useState("Delhi");
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen bg-gray-50 relative">
+    <div className="flex flex-col lg:flex-row h-screen bg-gray-50 relative overflow-x-hidden">
+
       {/* Sidebar */}
       <button
         className="lg:hidden fixed top-4 left-4 bg-white p-2 rounded-full shadow-md z-50"
@@ -82,10 +83,8 @@ const Dashboard = () => {
         {/* Main Content Area */}
         <div className="flex flex-col lg:flex-row gap-6 mb-8">
           
-          {/* Left Column - Competitor Prices */}
-          <div className="w-full lg:w-1/2">
-            <CompetitorPriceComparison /> {/* Use the new component */}
-          </div>
+          {/* Left Column  */}
+         
 
           {/* Right Column - Graph Section */}
           <div className="w-full lg:w-1/2" id="newsletter-capture-target">
@@ -108,6 +107,9 @@ const Dashboard = () => {
           </div>
         </div>
 
+<div>
+  <CompetitorPriceComparison />
+  </div>
      
 
         <div className="p-8 bg-gradient-to-r from-teal-50 to-teal-100 min-h-screen">
