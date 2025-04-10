@@ -52,6 +52,10 @@ let getStops;
 })();
 
 
+
+
+
+require('dotenv').config();
 require('./Models/db');
 
 const PORT=process.env.PORT||5000

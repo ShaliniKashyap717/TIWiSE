@@ -9,8 +9,9 @@ import {
   Users, 
   Accessibility, 
   Shield, 
-  LogOut,
-  Leaf
+  
+  Leaf,
+  LogOut
 } from 'lucide-react';
 
 const Sidebar = () => {
