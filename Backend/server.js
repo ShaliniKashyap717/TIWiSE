@@ -1,12 +1,22 @@
 require('dotenv').config();
 const express =require('express');
+const express = require('express');
 const app=express();
 const bodyParser = require('body-parser');
+const passport =require('passport');
+const session = require('express-session');
 const cors=require('cors');
 const AuthRouter = require('./routes/authRoutes.js'); 
 const { exec } = require("child_process");
 const subscriberRoutes= require('./routes/subscriberRoutes.js')
 const newsletterJob = require('./utils/cronJob')
+const ExpenseRouter = require('./routes/ExpenseRouter.js');
+const ensureAuthenticated = require('./middlewares/Auth.js');
+const dbConnect = require('./config/dbConnect.js');
+const currencyRoutes = require('./routes/currencyRoutes');
+const weatherRoutes=require('./routes/WeatherRoute.js')
+const activitiesRoute=require('./routes/activitiesRoute.js')
+const locationRoutes=require('./routes/locationRoute.js')
 
 const cron = require('node-cron'); 
 const geminiRoutes = require('./routes/geminiRoutes');
@@ -52,22 +62,58 @@ let getStops;
 })();
 
 
-require('./Models/db');
 
+require('./config/passportConfig.js');
+
+
+require('dotenv').config();
+// require('./Models/db');
+dbConnect();
 const PORT=process.env.PORT||5000
 
 app.get('/ping',(req,res)=>{
     res.send('PONG');
 })
 app.use((req, res, next) => {
+         console.log("Session:", req.session);
+  console.log("User:", req.user);
     console.log(`Incoming request: ${req.method} ${req.url}`);
     next();
 });
+//middleware
+app.use(express.urlencoded({ limit: "100mb", extended: true }));
 
 app.use(bodyParser.json());
-app.use(cors());
+const corsOptions = {
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000', // frontend origin
+    credentials: true,
+  };
+  
+  app.use(cors(corsOptions));
+  
+app.use(session({
+    secret: process.env.SESSION_SECRET || "secret",
+    resave: false,
+    saveUninitialized:false,
+    cookie:{
+        httpOnly: true,
+    secure: false, // true if using https
+    sameSite: "lax", // or 'none' if secure
+    }
+})
+);
+app.use(passport.initialize());
+app.use(passport.session());
+//routes
+
 app.use('/auth',AuthRouter);
+app.use('/expenses',ensureAuthenticated ,ExpenseRouter)
 app.use('/api/subscribers', subscriberRoutes);
+app.use('/api/currency', currencyRoutes);
+app.use('/api/weather', weatherRoutes);
+// Use the activitiesRoute for handling activity-related requests
+app.use('/api/activities', activitiesRoute); // Prefix all routes with /api
+app.use('/api', locationRoutes);
 
 const wheelchairRoute = require('./routes/gtfs'); // path may vary
 app.use('/api', wheelchairRoute);

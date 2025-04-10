@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { Toaster } from "./components/ui/sonner";
 import Dashboard from './pages/Dashboard'
 import Profile from "./pages/Profile";
-import Expenses from "./pages/Expenses";
+import ExpenseTracker from "./pages/ExpenseTracker";
 import SafePlaces from "./pages/SafePlaces";
 import SocialConnect from "./pages/SocialConnect";
 import Accessibility from "./pages/Accessibility";
@@ -12,7 +12,7 @@ import Newsletter from "./pages/Newsletter";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
 import Signup from "./pages/Signup"; 
-import Login from './pages/Login'; 
+
  
   
 import RefreshHandler from "./components/RefreshHandler";
@@ -20,26 +20,34 @@ import RefreshHandler from "./components/RefreshHandler";
 
 import { Navigate } from "react-router-dom";
 import Sustainability from "./pages/Sustainability";
+import Login from './pages/Login';
+import Setup2FA from "./pages/Setup2FA";
+import Verify2FA from "./pages/verify2FA";
+import Expenses from "./pages/Expenses";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { SessionProvider } from "./context/SessionContext";
+// import RefreshHandler from "./components/RefreshHandler"
 
 function App(){
-    const [isAuthenticated,setIsAuthenticated]=useState(false);
-    const PrivateRoute=({element})=>{
-      return isAuthenticated? element: <Navigate to="/login"/>
-    }
-
-
+   
   return(
     <>
     <Toaster position="top-right" />
-    <RefreshHandler setIsAuthenticated={setIsAuthenticated}/>
+  
+    {/* <RefreshHandler setIsAuthenticated={setIsAuthenticated}/> */}
+    <SessionProvider>
     <Routes>
-      <Route path='/' element={<Navigate to="/login"/>} />
       <Route path='/login' element={<Login/>} />
       <Route path='/signup' element={<Signup/>} />
+      
+      
+      <Route element={<ProtectedRoute/>}>
       <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/home" element={<PrivateRoute element={<Home/>} />}/>
+      <Route path="/" element={ <Home/>}/>
+      <Route path='/setup-2fa' element={<Setup2FA/>} />
+      <Route path='/verify-2fa' element={<Verify2FA/>} />
       <Route path="/profile" element={<Profile />} />
-      <Route path="/expenses" element={<Expenses />} />
+      <Route path="/expenseTracker" element={<ExpenseTracker />} />
       <Route path="/safe-places" element={<SafePlaces />} />
       <Route path="/social-connect" element={<SocialConnect />} />
       <Route path="/accessibility" element={<Accessibility />} />
@@ -47,8 +55,11 @@ function App(){
       <Route path="/newsletter" element={<Newsletter />} /> 
       <Route path="/sustainability" element={<Sustainability/>}/>
     
+      <Route path="/expenses" element={<Expenses/>} /> 
       <Route path="*" element={<NotFound />} />
+      </Route>
     </Routes>
+    </SessionProvider>
   </>
   );
 };

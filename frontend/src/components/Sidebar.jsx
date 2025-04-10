@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink,useNavigate } from 'react-router-dom';
 import UserProfile from "./UserProfile";
 import { 
   Home, 
@@ -9,11 +9,14 @@ import {
   Users, 
   Accessibility, 
   Shield, 
-  LogOut,
-  Leaf
+  
+  Leaf,
+  LogOut
 } from 'lucide-react';
 
 const Sidebar = () => {
+  
+
   return (
     <aside className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col animate-slide-in">
       <div className="p-6">
@@ -36,7 +39,7 @@ const Sidebar = () => {
           <span>Dashboard</span>
         </NavLink>
         
-        <NavLink to="/expenses" className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''} mt-2`}>
+        <NavLink to="/expenseTracker" className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''} mt-2`}>
           <DollarSign size={20} />
           <span>Expenses</span>
         </NavLink>

@@ -4,7 +4,7 @@ const signupValidation = (req, res, next) => {
     console.log("Request Body:", req.body); // Debugging ke liye
 
     const schema = Joi.object({
-        name: Joi.string().trim().min(3).max(100).required(),
+        username: Joi.string().trim().min(3).max(100).required(),
         email: Joi.string().trim().min(3).required(),
         password: Joi.string().trim().min(3).max(100).required(),
         phone_no: Joi.string().pattern(/^[0-9]{10}$/).optional() 

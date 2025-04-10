@@ -62,19 +62,19 @@ const SafePlaces = () => {
               name: 'Serenity Hotel',
               location: 'Downtown District',
               rating: '4.9 (2.5k reviews)',
-              img: '/hotel1.jpg'
+               img: '/hotel1.jpg'
             },
             {
               name: "Women's Boutique Hotel",
               location: 'Arts District',
               rating: '4.8 (1.8k reviews)',
-              img: '/hotel2.jpg'
+               img: '/hotel2.jpg'
             },
             {
               name: 'SafeStay Hostel',
               location: 'University Area',
               rating: '4.7 (950 reviews)',
-              img: '/hotel3.jpg'
+              img: '/safe-stay.jpg'
             }
           ].map((hotel, index) => (
             <div key={index} className="bg-white rounded-lg shadow-md">
