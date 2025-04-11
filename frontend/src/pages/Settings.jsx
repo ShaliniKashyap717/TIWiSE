@@ -72,7 +72,6 @@ const Settings = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-
       const token = localStorage.getItem("token");
       console.log("🔹 Sending Request with Token:", token);
       console.log("🔹 Updated User Data:", user);
