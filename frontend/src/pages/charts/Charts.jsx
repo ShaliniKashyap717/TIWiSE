@@ -1,7 +1,6 @@
 import React from "react";
 import MovieChart from "./MovieChart";
 import HotelChart from "./HotelChart";
-import PlaceChart from "./PlaceChart";
 
 const Chart = ({ type = "" }) => {
   if (!type) {
@@ -20,8 +19,6 @@ const Chart = ({ type = "" }) => {
     ComponentToRender = MovieChart;
   } else if (typeLower.includes("hotel")) {
     ComponentToRender = HotelChart;
-  } else if (typeLower.includes("place")) {
-    ComponentToRender = PlaceChart;
   } else {
     return (
       <div className="h-full flex items-center justify-center">

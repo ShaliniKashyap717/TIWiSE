@@ -35,6 +35,7 @@ const CompetitorPriceComparison = () => {
   const [competitorData, setCompetitorData] = useState(null);
   const [yAxisRange, setYAxisRange] = useState({ min: 0, max: 10000 });
 
+  
   useEffect(() => {
     const platforms = ['Cleartrip', 'MakeMyTrip', 'Yatra'];
 
