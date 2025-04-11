@@ -64,6 +64,8 @@ router.get("/profile", (req, res) => {
   
 
 // router.route('/users/profile').post(ensureAuthenticated,updateUserProfile);
+router.post('/login',loginValidation,login);
+router.post('/signup',signupValidation,signup);
 router.put('/profile', ensureAuthenticated,updateUserProfile);
 
 

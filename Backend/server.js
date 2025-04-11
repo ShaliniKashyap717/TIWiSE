@@ -17,12 +17,39 @@ const currencyRoutes = require('./routes/currencyRoutes');
 const weatherRoutes=require('./routes/WeatherRoute.js')
 const activitiesRoute=require('./routes/activitiesRoute.js')
 const locationRoutes=require('./routes/locationRoute.js')
+const express = require('express');
+const http = require('http');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const { exec } = require("child_process");
+const axios= require('axios');
+const amadeusRoutes=require('./routes/amadeus.js')
+const tmdbRoutes=require('./routes/tmdb.js')
+const dotenv = require('dotenv');
+dotenv.config();
 
+const AuthRouter = require('./routes/authRoutes.js'); 
+const subscriberRoutes = require('./routes/subscriberRoutes.js');
+const cityRoutes=require('./routes/cityRoutes.js')
+const shareLoc= require('./routes/locationRoutes.js')
+const newsletterJob = require('./utils/cronJob');
+const storyRoute= require('./routes/stories.js')
+require('./models/db.js');
 
+// Socket.IO and MongoDB models
+const { Server } = require('socket.io');
 
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*'
+  }
+});
 
-require('dotenv').config();
-require('./Models/db');
+// Middleware
+app.use(bodyParser.json());
+app.use(cors());
 
 const cron = require('node-cron'); 
 const geminiRoutes = require('./routes/geminiRoutes');
@@ -80,6 +107,7 @@ const PORT=process.env.PORT||5000
 app.get('/ping',(req,res)=>{
     res.send('PONG');
 })
+// Logging middleware
 app.use((req, res, next) => {
          console.log("Session:", req.session);
   console.log("User:", req.user);
@@ -144,7 +172,13 @@ app.get('/api/stops', async (req, res) => {
   app.use("/api/movies", movieRoutes);
   
   
+// Routes
+app.get('/ping', (req, res) => res.send('PONG'));
+app.use('/auth', AuthRouter);
+app.use('/api/subscribers', subscriberRoutes);
+app.use('/api/locations', shareLoc);
 
+// Cron job
 newsletterJob.start();
 
 const sqlite3 = require('sqlite3').verbose();
@@ -164,6 +198,7 @@ const NodeCache = require("node-cache");
 
 const trendCache = new NodeCache({ stdTTL: 3600 }); 
 
+// Trends route
 app.get("/trends", (req, res) => {
     const { cityA, cityB } = req.query;
 
@@ -199,9 +234,105 @@ app.get("/trends", (req, res) => {
     });
 });
 
+const rooms = {};
 
+// ========== SOCKET.IO ========== //
+io.on('connection', (socket) => {
+  console.log(`🔌 New socket connected: ${socket.id}`);
 
+  socket.on('createRoom', ({ meetupName, username }) => {
+    const roomId = generateRoomId();
+    rooms[roomId] = {
+      name: meetupName,
+      members: {},
+    };
+    rooms[roomId].members[socket.id] = { 
+      socketId: socket.id, 
+      username: username || `User-${socket.id.slice(0, 4)}`,
+      location: null 
+    };
 
-app.listen(PORT,()=>{
-    console.log(`server is running on ${PORT}`)
-})
+    socket.join(roomId);
+
+    socket.emit('roomCreated', { roomId, meetupName });
+    io.to(roomId).emit('roomUpdate', Object.values(rooms[roomId].members));
+  });
+
+  socket.on('joinRoom', ({ roomId, username }) => {
+    if (!rooms[roomId]) {
+      socket.emit('error', { message: 'Room not found!' });
+      return;
+    }
+
+    rooms[roomId].members[socket.id] = { 
+      socketId: socket.id, 
+      username: username || `User-${socket.id.slice(0, 4)}`,
+      location: null 
+    };
+
+    socket.join(roomId);
+
+    socket.emit('roomJoined', {
+      roomId,
+      meetupName: rooms[roomId].name,
+    });
+    io.to(roomId).emit('roomUpdate', Object.values(rooms[roomId].members));
+    io.to(roomId).emit('userJoined', { 
+      username: rooms[roomId].members[socket.id].username 
+    });
+  });
+
+  socket.on('updateLocation', ({ roomId, location }) => {
+    if (rooms[roomId]?.members[socket.id]) {
+      rooms[roomId].members[socket.id].location = location;
+      io.to(roomId).emit('locationUpdate', Object.values(rooms[roomId].members));
+    }
+  });
+
+  socket.on('leaveRoom', ({ roomId }) => {
+    if (rooms[roomId]?.members[socket.id]) {
+      const username = rooms[roomId].members[socket.id].username;
+      delete rooms[roomId].members[socket.id];
+      socket.leave(roomId);
+      io.to(roomId).emit('userLeft', { username });
+
+      if (Object.keys(rooms[roomId].members).length === 0) {
+        delete rooms[roomId];
+      } else {
+        io.to(roomId).emit('roomUpdate', Object.values(rooms[roomId].members));
+      }
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`X Socket disconnected: ${socket.id}`);
+    for (const roomId in rooms) {
+      if (rooms[roomId].members[socket.id]) {
+        const username = rooms[roomId].members[socket.id].username;
+        delete rooms[roomId].members[socket.id];
+        io.to(roomId).emit('userLeft', { username });
+
+        if (Object.keys(rooms[roomId].members).length === 0) {
+          delete rooms[roomId];
+        } else {
+          io.to(roomId).emit('roomUpdate', Object.values(rooms[roomId].members));
+        }
+      }
+    }
+  });
+});
+
+// ======= ROOM ID GENERATOR ======= //
+function generateRoomId() {
+  return Math.random().toString(36).substr(2, 6).toUpperCase();
+}
+
+app.use('/api/cities', cityRoutes);
+app.use('/api/stories',storyRoute);
+app.use('/api', amadeusRoutes);
+app.use('/api', tmdbRoutes);
+
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});

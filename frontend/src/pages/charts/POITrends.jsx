@@ -43,9 +43,10 @@ const POITrends = ({ cityA, cityB }) => {
     }, [cityA, cityB, backendUrl]);
     
     return (
-        <div className="p-4 bg-white shadow-lg rounded-xl">
+        <div className="p-4 bg-white shadow-lg rounded-xl" id="trend">
             <h2 className="text-xl font-semibold mb-4"> Travel Trend Comparison: {cityA} vs {cityB}</h2>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={300}  >.
+
                 <LineChart data={trendData}>
                     <XAxis dataKey="date" />
                     <YAxis />

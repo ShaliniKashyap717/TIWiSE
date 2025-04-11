@@ -13,6 +13,8 @@ import { ItineraryProvider } from '../context/ItineraryContext';
 import ItineraryPlanner from '../components/ItineraryPlanner';
 import ItineraryManager from '../components/ItineraryManager';
 
+
+const apikey=import.meta.env.VITE_OMDB_API_KEY;
 const Home = () => {
   const [selectedMood, setSelectedMood] = useState(null);
   const [movies, setMovies] = useState([]);
