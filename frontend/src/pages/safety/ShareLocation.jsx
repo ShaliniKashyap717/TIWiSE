@@ -71,7 +71,7 @@ const ShareLocation = ({ showShareLocation, setShowShareLocation }) => {
           email,
           coordinates: [currentLocation.lng, currentLocation.lat],
           city,
-          userId: "current-user-id", // Replace with actual user ID from auth
+          userId: name, // Replace with actual user ID from auth
           sharerName: name.trim()
         })
       });

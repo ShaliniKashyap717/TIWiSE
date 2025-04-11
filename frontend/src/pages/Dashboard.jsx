@@ -78,10 +78,6 @@ const Dashboard = () => {
           
           {/* Left Column  */}
          
-          {/* Left Column - Competitor Prices */}
-          <div className="w-full lg:w-1/2" id="compPrice">
-            <CompetitorPriceComparison /> {/* Use the new component */}
-          </div>
 
           {/* Right Column - Graph Section */}
           <div className="w-full lg:w-1/2" id="newsletter-capture-target">

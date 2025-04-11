@@ -1,167 +1,3 @@
-<<<<<<< HEAD
-import React from 'react';
-import { 
-  Star, 
-  Shield, 
-  Users, 
-  PhoneCall, 
-  MapPin, 
-  MessageCircle 
-} from 'lucide-react';
-import Sidebar from '../components/Sidebar';
-
-const SafePlaces = () => {
-  return (
-    <div className="flex h-screen bg-gray-50">
-      <Sidebar />
-      <main className="flex-1 overflow-y-auto p-6">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold">Safe Places for Women</h1>
-          <p className="text-gray-600">
-            Discover women-friendly destinations, accommodations, and local communities.
-          </p>
-        </div>
-
-        {/* Stats Section */}
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="p-4 bg-white rounded-lg shadow-md flex items-center gap-4">
-            <Star className="text-yellow-500" />
-            <div>
-              <p className="text-lg font-semibold">4.8/5</p>
-              <p className="text-sm text-gray-600">Safety Rating</p>
-            </div>
-          </div>
-          <div className="p-4 bg-white rounded-lg shadow-md flex items-center gap-4">
-            <Shield className="text-blue-500" />
-            <div>
-              <p className="text-lg font-semibold">24/7</p>
-              <p className="text-sm text-gray-600">Surveillance</p>
-            </div>
-          </div>
-          <div className="p-4 bg-white rounded-lg shadow-md flex items-center gap-4">
-            <Users className="text-green-500" />
-            <div>
-              <p className="text-lg font-semibold">100+</p>
-              <p className="text-sm text-gray-600">Help Centers</p>
-            </div>
-          </div>
-          <div className="p-4 bg-white rounded-lg shadow-md flex items-center gap-4">
-            <Users className="text-purple-500" />
-            <div>
-              <p className="text-lg font-semibold">5K+</p>
-              <p className="text-sm text-gray-600">Community Members</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Verified Safe Accommodations */}
-        <h2 className="text-xl font-semibold mb-4">Verified Safe Accommodations</h2>
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          {[
-            {
-              name: 'Serenity Hotel',
-              location: 'Downtown District',
-              rating: '4.9 (2.5k reviews)',
-               img: '/hotel1.jpg'
-            },
-            {
-              name: "Women's Boutique Hotel",
-              location: 'Arts District',
-              rating: '4.8 (1.8k reviews)',
-               img: '/hotel2.jpg'
-            },
-            {
-              name: 'SafeStay Hostel',
-              location: 'University Area',
-              rating: '4.7 (950 reviews)',
-              img: '/safe-stay.jpg'
-            }
-          ].map((hotel, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-md">
-              <img src={hotel.img} alt={hotel.name} className="rounded-t-lg w-full h-40 object-cover" />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold">{hotel.name}</h3>
-                <p className="text-sm text-gray-500 flex items-center gap-1">
-                  <MapPin className="w-4 h-4" /> {hotel.location}
-                </p>
-                <p className="text-sm font-semibold mt-1">{hotel.rating}</p>
-                <a href="#" className="text-blue-500 text-sm font-medium mt-2 inline-block">
-                  View Details
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Emergency Contacts & Safety Community */}
-        <div className="grid grid-cols-2 gap-6">
-          {/* Emergency Contacts */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-lg font-semibold mb-4">Emergency Contacts</h2>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                <div>
-                  <p className="font-semibold">Emergency Helpline</p>
-                  <p className="text-sm text-gray-500">Available 24/7</p>
-                </div>
-                <button className="bg-red-500 text-white px-4 py-1 rounded-lg">Call Now</button>
-              </div>
-              <div className="flex items-center justify-between p-3 border rounded-lg">
-                <div>
-                  <p className="font-semibold">Local Police Station</p>
-                  <p className="text-sm text-gray-500">Direct Contact</p>
-                </div>
-                <button className="bg-blue-500 text-white px-4 py-1 rounded-lg">Contact</button>
-              </div>
-            </div>
-          </div>
-
-          {/* Safety Community */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-lg font-semibold mb-4">Safety Community</h2>
-            <div className="space-y-3">
-              {[
-                { name: 'Sarah Williams', role: 'Local Guide & Safety Advisor' },
-                { name: 'Emma Chen', role: 'Community Manager' }
-              ].map((member, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <p className="font-semibold">{member.name}</p>
-                    <p className="text-sm text-gray-500">{member.role}</p>
-                  </div>
-                  <button className="bg-gray-200 px-4 py-1 rounded-lg flex items-center gap-1">
-                    <MessageCircle className="w-4 h-4" /> Message
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Safety Tips */}
-        <div className="bg-white p-6 rounded-lg shadow-md mt-6">
-          <h2 className="text-lg font-semibold mb-4">Essential Safety Tips</h2>
-          <div className="grid grid-cols-3 gap-4">
-            {[
-              { tip: 'Share Location', desc: 'Always share your location with trusted contacts' },
-              { tip: 'Stay Alert', desc: 'Be aware of your surroundings at all times' },
-              { tip: 'Travel in Groups', desc: 'Prefer group activities when possible' }
-            ].map((tip, index) => (
-              <div key={index} className="p-4 border rounded-lg">
-                <p className="font-semibold">{tip.tip}</p>
-                <p className="text-sm text-gray-500">{tip.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-};
-
-export default SafePlaces;
-=======
 import React, { useState, useEffect } from 'react';
 import { 
   Star, Shield, Clock, MapPin, Bookmark, Bell, Smile, Meh, Frown,
@@ -187,7 +23,6 @@ import { fetchStories } from './safety/api'
 const sampleCityData = {
     "city": "Delhi",
     "country": "India",
-    "summary": "Delhi, officially the National Capital Territory (NCT) of Delhi, is a city and a union territory of India containing New Delhi, the capital of India. Straddling the Yamuna river, but spread chiefly to the west, or beyond its right bank, Delhi shares borders with the state of Uttar Pradesh in the east and with the state of Haryana in the remaining directions. Delhi became a union territory on 1 November 1956 and the NCT in 1995. The NCT covers an area of 1,484 square kilometres (573 sq mi). According to the 2011 census, Delhi's city proper population was over 11 million, while the NCT's population was about 16.8 million.\nThe topography of the medieval fort Purana Qila on the banks of the river Yamuna matches the literary description of the citadel Indraprastha in the Sanskrit epic Mahabharata; however, excavations in the area have revealed no signs of an ancient built environment. From the early 13th century until the mid-19th century, Delhi was the capital of two major empires, the Delhi Sultanate and the Mughal Empire, which covered large parts of South Asia. All three UNESCO World Heritage Sites in the city, the Qutub Minar, Humayun's Tomb, and the Red Fort, belong to this period. Delhi was the early centre of Sufism and Qawwali music. The names of Nizamuddin Auliya and Amir Khusrau are prominently associated with it. The Khariboli dialect of Delhi was part of a linguistic development that gave rise to the literature of Urdu and later Modern Standard Hindi. Major Urdu poets from Delhi include Mir Taqi Mir and Mirza Ghalib. Delhi was a notable centre of the Indian Rebellion of 1857. In 1911, New Delhi, a southern region within Delhi, became the capital of the British Indian Empire. During the Partition of India in 1947, Delhi was transformed from a Mughal city to a Punjabi one, losing two-thirds of its Muslim residents, in part due to the pressure brought to bear by arriving Hindu and Sikh refugees from western Punjab. After independence in 1947, New Delhi continued as the capital of the Dominion of India, and after 1950 of the Republic of India.\nDelhi's urban agglomeration, which includes the satellite cities Ghaziabad, Faridabad, Gurgaon, Noida, Greater Noida and YEIDA city located in an area known as the National Capital Region (NCR), has an estimated population of over 28 million, making it the largest metropolitan area in India and the second-largest in the world (after Tokyo). Delhi ranks fifth among the Indian states and union territories in human development index, and has the second-highest GDP per capita in India (after Goa). Although a union territory, the political administration of the NCT of Delhi today more closely resembles that of a state of India, with its own legislature, high court and an executive council of ministers headed by a chief minister. New Delhi is jointly administered by the federal government of India and the local government of Delhi, and serves as the capital of the nation as well as the NCT of Delhi. Delhi is also the centre of the National Capital Region, which is an \"interstate regional planning\" area created in 1985. Delhi hosted the inaugural 1951 Asian Games, the 1982 Asian Games, the 1983 Non-Aligned Movement summit, the 2010 Men's Hockey World Cup, the 2010 Commonwealth Games, the 2012 BRICS summit, the 2023 G20 summit, and was one of the major host cities of the 2011 and 2023 Cricket World Cups.",
     "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Jama_Masjid_2011.jpg/500px-Jama_Masjid_2011.jpg",
     "crime_index": 59.1,
     "safety_index": 40.9,
@@ -336,15 +171,27 @@ const SafePlaces = () => {
   }, [selectedCity]);
 
 
-  const getStories = async ()=>{
-    try{
-      const {data}= await fetchStories();
+  const getStories = async () => {
+    try {
+      const { data } = await fetchStories();
       setStories(data);
-    }catch(error){
-
+    } catch (error) {
       console.log('Error fetching stories: ', error);
+      // Fallback to initial stories if API fails
+      setStories(initialStories);
     }
   };
+
+  // In your SafePlaces component, add this effect
+useEffect(() => {
+  // Ensure currentStoryIndex is always valid
+  if (stories.length > 0 && currentStoryIndex >= stories.length) {
+    setCurrentStoryIndex(stories.length - 1);
+  } else if (stories.length === 0) {
+    setCurrentStoryIndex(0);
+  }
+}, [stories, currentStoryIndex]);
+
 
   useEffect(()=>{
     getStories();
@@ -368,6 +215,24 @@ const SafePlaces = () => {
   const handlePrevStory = () => {
     setCurrentStoryIndex(prev => (prev - 1 + stories.length) % stories.length);
     setAutoScroll(false);
+  };
+  const handleStoryAdded = async (newStory) => {
+    // Optimistically update the UI
+    setStories(prev => {
+      const updated = [...prev, newStory];
+      // Set index to the new story
+      setCurrentStoryIndex(updated.length - 1);
+      return updated;
+    });
+    
+    // Then refresh from server to ensure consistency
+    try {
+      const { data } = await fetchStories();
+      setStories(data);
+      setCurrentStoryIndex(data.length - 1); // Ensure we're on the new story
+    } catch (error) {
+      console.error('Error refreshing stories:', error);
+    }
   };
 
 
@@ -628,25 +493,24 @@ const SafePlaces = () => {
                 </ul>
               </div>
             </div>
-
             <ShareExperience 
-        showShareForm={showShareForm}
-        setShowShareForm={setShowShareForm}
-        fetchStories={getStories}
-      />
+              showShareForm={showShareForm}
+              setShowShareForm={setShowShareForm}
+              onStoryAdded={handleStoryAdded}
+            />
           </div>
 
           {/* Right column - Stories and emergency info */}
           <div className="space-y-6">
           <TravelStories 
-        stories={stories}
-        currentStoryIndex={currentStoryIndex}
-        autoScroll={autoScroll}
-        setAutoScroll={setAutoScroll}
-        setCurrentStoryIndex={setCurrentStoryIndex}
-        handleNextStory={handleNextStory}
-        handlePrevStory={handlePrevStory}
-      />
+              stories={stories}
+              currentStoryIndex={currentStoryIndex}
+              autoScroll={autoScroll}
+              setAutoScroll={setAutoScroll}
+              setCurrentStoryIndex={setCurrentStoryIndex}
+              handleNextStory={handleNextStory}
+              handlePrevStory={handlePrevStory}
+            />
 
             <EmergencyContacts 
               emergencyCountry={emergencyCountry}
@@ -662,4 +526,3 @@ const SafePlaces = () => {
 };
 
 export default SafePlaces;
->>>>>>> d717b467 (enhanced functionalitieas added social connect, newsletter, safe places)
