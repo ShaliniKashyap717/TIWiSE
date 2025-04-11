@@ -5,6 +5,7 @@ import Sidebar from "../components/Sidebar";
 import { ThemeContext } from "../context/ThemeProvider";
 import UserLocationMap from "../components/UserLocationMap";
 
+const backendUrl= import.meta.env.VITE_BACKEND_URL;
 const Settings = () => {
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const [location, setLocation] = useState(null); // Make sure this is defined in your component
@@ -72,7 +73,6 @@ const Settings = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-
       const token = localStorage.getItem("token");
       console.log("🔹 Sending Request with Token:", token);
       console.log("🔹 Updated User Data:", user);

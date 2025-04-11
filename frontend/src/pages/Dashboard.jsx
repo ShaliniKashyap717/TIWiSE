@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { Menu, Waves, Mountain, Search, SlidersHorizontal } from "lucide-react";
-import axios from 'axios';
+import { Menu, Waves, Mountain, Search, SlidersHorizontal } from "lucide-react";;
 import CompetitorPriceComparison from "./charts/CompetitorPriceComparison";
 import Sidebar from "../components/Sidebar";
-import MoodCard from "../components/MoodCard";
-import DestinationCard from "../components/DestinationCard";
 import Chart from "./charts/Charts";
 import POITrends from "./charts/POITrends";
 import WeatherChart from "./charts/WeatherChart";
@@ -37,16 +33,13 @@ const indianCities = [
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedMood, setSelectedMood] = useState(null);
-  const [movies, setMovies] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [summarySection, setSummarySection] = useState('Most Visited Places');
+  const [summarySection, setSummarySection] = useState('Most Rated Hotels');
 
   const AnalyticsCategory = [
-    { title: "Most Visited Places" },
+    { title: "Most Rated Hotels" },
     { title: "Most Liked Movies" },
-    { title: "Most Rated Hotels" }
+  
   ];
 
   const [cityA, setCityA] = useState("Mumbai"); 
@@ -165,7 +158,7 @@ const Dashboard = () => {
       </div>
 
       {/* Travel Trends Component */}
-      <div className="mt-8">
+      <div className="mt-8" id="trend">
         <POITrends cityA={cityA} cityB={cityB} />
       </div>
       <div >

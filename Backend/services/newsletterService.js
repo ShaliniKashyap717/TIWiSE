@@ -1,9 +1,12 @@
 const Subscriber = require('../models/Subscriber');
 const { sendWelcomeEmail, sendNewsletterEmail } = require('./emailService');
-const { takeScreenshot } = require('./screenshotService');
+const { takeScreenshots } = require('./screenshotService');
 const fs = require('fs');
+const validator =require('validator')
 
 exports.handleSubscription = async (email, fullName) => {
+  if(!validator.isEmail(email))
+    throw new Error('Providea valid email')
   const existingSubscriber = await Subscriber.findOne({ email });
   if (existingSubscriber) {
     throw new Error('This email is already subscribed');
@@ -15,55 +18,96 @@ exports.handleSubscription = async (email, fullName) => {
   return newSubscriber;
 };
 
-exports.handleUnsubscription = async (email) => {
-  const subscriber = await Subscriber.findOneAndUpdate(
-    { email },
-    { isActive: false },
-    { new: true }
-  );
-
-  if (!subscriber) {
-    throw new Error('Email not found in subscribers list');
-  }
-  
-  return subscriber;
-};
 
 exports.sendScheduledEmails = async () => {
   try {
-    const activeSubscribers = await Subscriber.find({ isActive: true });
+    const activeSubscribers = await Subscriber.find({});
     
     if (activeSubscribers.length === 0) {
       console.log('No active subscribers found');
       return { success: true, count: 0 };
     }
 
-    const screenshotPath = await takeScreenshot();
-    console.log('Screenshot taken successfully:', screenshotPath);
-
-    const results = await Promise.allSettled(
-      activeSubscribers.map(subscriber => 
-        sendNewsletterEmail(subscriber.email, subscriber.fullName, screenshotPath)
-          .then(() => ({ success: true, email: subscriber.email }))
-          .catch(error => ({ success: false, email: subscriber.email, error }))
-      ))
-
-    if (screenshotPath && fs.existsSync(screenshotPath)) {
-      fs.unlinkSync(screenshotPath);
-      console.log('Temporary screenshot file removed');
+    // 1. Verify screenshot generation
+    let screenshotPaths;
+    try {
+      screenshotPaths = await takeScreenshots();
+      console.log('Screenshots taken successfully:', screenshotPaths);
+      
+      // Verify screenshots exist
+      screenshotPaths.forEach(path => {
+        if (!fs.existsSync(path)) {
+          throw new Error(`Screenshot not found at ${path}`);
+        }
+      });
+    } catch (screenshotError) {
+      console.error('Failed to generate screenshots:', screenshotError);
+      return {
+        success: false,
+        error: 'Failed to generate screenshots',
+        details: screenshotError.message
+      };
     }
 
+    // 2. Send emails with attachments
+    const results = await Promise.allSettled(
+      activeSubscribers.map(async (subscriber) => {
+        try {
+          await sendNewsletterEmail(
+            subscriber.email, 
+            subscriber.fullName, 
+            screenshotPaths
+          );
+          return { success: true, email: subscriber.email };
+        } catch (error) {
+          console.error(`Failed to send to ${subscriber.email}:`, error);
+          return { 
+            success: false, 
+            email: subscriber.email, 
+            error: error.message 
+          };
+        }
+      })
+    );
+
+    // 3. Clean up screenshots
+    try {
+      screenshotPaths.forEach(path => {
+        if (fs.existsSync(path)) {
+          fs.promises.unlink(path);
+        }
+      });
+      console.log('Temporary screenshot files removed');
+    } catch (cleanupError) {
+      console.error('Error cleaning up screenshots:', cleanupError);
+    }
+
+    // 4. Analyze results
     const successfulSends = results.filter(r => r.value?.success).length;
+    const failedSends = results.filter(r => !r.value?.success);
+    
     console.log(`Newsletter sent to ${successfulSends}/${activeSubscribers.length} subscribers`);
     
+    if (failedSends.length > 0) {
+      console.error('Failed sends:', failedSends.map(f => ({
+        email: f.value.email,
+        error: f.value.error
+      })));
+    }
+    
     return { 
-      success: true, 
+      success: successfulSends > 0,
       count: successfulSends,
       total: activeSubscribers.length,
+      failures: failedSends.length,
       details: results.map(r => r.value) 
     };
   } catch (error) {
-    console.error('Error in sendScheduledEmails:', error);
-    throw error;
+    console.error('Critical error in sendScheduledEmails:', error);
+    return {
+      success: false,
+      error: 'Critical error',
+      details: error.message
+    };
   }
 };

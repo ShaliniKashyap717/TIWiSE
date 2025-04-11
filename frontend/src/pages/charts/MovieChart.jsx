@@ -5,16 +5,15 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const API_KEY = '9680287e6a3746ce4e45e7c9cd7fc829';
+const backendUrl=import.meta.env.VITE_BACKEND_URL;
 
 const MovieChart = () => {
   const [movies, setMovies] = useState([]);
-  const [category, setCategory] = useState('popular');
+  const [category, setCategory] = useState('top_rated');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const categories = [
-    { value: 'popular', label: 'Popular Movies' },
     { value: 'top_rated', label: 'Top Rated' },
     { value: 'upcoming', label: 'Upcoming' },
     { value: 'now_playing', label: 'Now Playing' }
@@ -24,10 +23,9 @@ const MovieChart = () => {
     const fetchMovies = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/${category}?api_key=${API_KEY}&language=en-US&page=1`
-        );
-        setMovies(response.data.results.slice(0, 10));
+        const response = await axios.get(`${backendUrl}/api/movies/${category}`);
+        console.log(response)
+        setMovies(response.data.slice(0, 10));
         setError('');
       } catch (error) {
         console.error('Error fetching movies:', error);
@@ -43,11 +41,18 @@ const MovieChart = () => {
   const chartData = {
     labels: movies.map(movie => movie.title),
     datasets: [{
-      data: movies.map(movie => movie.vote_average * 10),
+      data: movies.map(movie => movie.vote_average),
       backgroundColor: [
-        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
-        '#9966FF', '#FF9F40', '#8AC24A', '#FF5722', 
-        '#607D8B', '#9C27B0'
+        "#88D8D8", // Soft teal (light)  
+        "#5CCCCC", // Bright teal  
+        "#38B2AC", // Classic teal (balanced)  
+        "#2C9C96", // Slightly deeper  
+        "#20847F", // Medium-dark teal  
+        "#166D69", // Rich teal  
+        "#0D5653", // Deep teal  
+        "#07403E", // Very dark teal  
+        "#03302E", // Near-black teal  
+        "#012120"  // Darkest teal (almost black)  
       ],
       borderWidth: 1
     }]

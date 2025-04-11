@@ -1,6 +1,5 @@
 const { 
     handleSubscription,
-    handleUnsubscription,
     sendScheduledEmails
   } = require('../services/newsletterService');
   
@@ -22,23 +21,7 @@ const {
     }
   };
   
-  const unsubscribe = async (req, res) => {
-    try {
-      const { email } = req.body;
-      await handleUnsubscription(email);
-      
-      res.json({ 
-        success: true, 
-        message: 'Unsubscription successful' 
-      });
-    } catch (error) {
-      res.status(400).json({ 
-        success: false, 
-        message: error.message 
-      });
-    }
-  };
-  
+ 
   const sendNewsletter = async (req, res) => {
     try {
       const result = await sendScheduledEmails();
@@ -53,6 +36,5 @@ const {
   
   module.exports = { 
     subscribe, 
-    unsubscribe,
     sendNewsletter
   };

@@ -6,6 +6,13 @@ import LoginForm from '../components/LoginForm';
 import {useSession} from "../context/SessionContext";
 function Login() {
     
+    const [loginInfo, setloginInfo] = useState({
+        email: '',
+        password: '',
+    });
+
+    const backendUrl= import.meta.env.VITE_BACKEND_URL;
+
     const navigate = useNavigate();
     const {login} = useSession();
 

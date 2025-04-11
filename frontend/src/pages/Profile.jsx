@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+
+const backendUrl= import.meta.env.VITE_BACKEND_URL;
 const EditProfile = () => {
     const [user, setUser] = useState({
         name: "",
@@ -23,7 +25,7 @@ const EditProfile = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem("token");  // ✅ Token le lo for authentication
-            const response = await fetch("http://localhost:8080/auth/profile", {
+            const response = await fetch(`${backendUrl}/auth/profile`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

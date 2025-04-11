@@ -3,7 +3,10 @@ import { Link } from "react-router-dom";
 import { CheckCircle } from "lucide-react";
 import Sidebar from '../components/Sidebar';
 import axios from 'axios'
+import validator from 'validator'
 
+
+const backendUrl= import.meta.env.VITE_BACKEND_URL;
 const INTERESTS_OPTIONS = ["Travel Tips", "Destinations", "Local Events", "Travel Deals"];
 const TESTIMONIALS = [
   {
@@ -50,10 +53,15 @@ const Newsletter = () => {
 
 const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validator.isEmail(formData.email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
     setIsLoading(true);
     
     try {
-      const result = await axios.post('http://localhost:5000/api/subscribers/subscribe',
+      const result = await axios.post(`${backendUrl}/api/subscribers/subscribe`,
         {
           email: formData.email, 
           fullName:formData.fullName});
