@@ -19,7 +19,7 @@ import ShareLocation from './safety/ShareLocation';
 import { fetchStories } from './safety/api'
 
 
-// Sample data structure matching your API response
+// Sample data structure matching to API response
 const sampleCityData = {
     "city": "Delhi",
     "country": "India",
