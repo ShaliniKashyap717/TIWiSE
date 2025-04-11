@@ -1,15 +1,9 @@
 require('dotenv').config();
-
 const express = require('express');
-const app=express();
 const bodyParser = require('body-parser');
 const passport =require('passport');
 const session = require('express-session');
 const cors=require('cors');
-const AuthRouter = require('./routes/authRoutes.js'); 
-const { exec } = require("child_process");
-const subscriberRoutes= require('./routes/subscriberRoutes.js')
-const newsletterJob = require('./utils/cronJob')
 const ExpenseRouter = require('./routes/ExpenseRouter.js');
 const ensureAuthenticated = require('./middlewares/Auth.js');
 const dbConnect = require('./config/dbConnect.js');
@@ -17,10 +11,7 @@ const currencyRoutes = require('./routes/currencyRoutes');
 const weatherRoutes=require('./routes/WeatherRoute.js')
 const activitiesRoute=require('./routes/activitiesRoute.js')
 const locationRoutes=require('./routes/locationRoute.js')
-const express = require('express');
 const http = require('http');
-const bodyParser = require('body-parser');
-const cors = require('cors');
 const { exec } = require("child_process");
 const axios= require('axios');
 const amadeusRoutes=require('./routes/amadeus.js')
@@ -43,14 +34,18 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*'
+    origin: `${process.env.FRONTEND_URL}`
   }
 });
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors());
+// app.use(cors());
 
+app.use(cors({
+  origin: `${process.env.FRONTEND_URL}`,  // your frontend origin
+  credentials: true                 // allow cookies
+}));
 const cron = require('node-cron'); 
 const geminiRoutes = require('./routes/geminiRoutes');
 const movieRoutes = require("./routes/movieRoutes");
@@ -332,7 +327,6 @@ app.use('/api/stories',storyRoute);
 app.use('/api', amadeusRoutes);
 app.use('/api', tmdbRoutes);
 
-const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

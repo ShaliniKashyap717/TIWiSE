@@ -5,14 +5,14 @@ import { createStory } from './api';
 const ShareExperience = ({ 
   showShareForm, 
   setShowShareForm,
-  fetchStories
+  onStoryAdded
 }) => {
   const [newExperience, setNewExperience] = useState({
     title: '',
     content: '',
     location: '',
     rating: 3,
-    author: 'Anonymous' // Default value
+    author: 'Anonymous'
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,21 +30,20 @@ const ShareExperience = ({
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
-
+  
     try {
-      // Prepare the data to send
       const storyData = {
         title: newExperience.title,
         content: newExperience.content,
         location: newExperience.location,
         rating: parseInt(newExperience.rating),
-        author: newExperience.author || 'Anonymous' // Fallback to Anonymous if empty
+        author: newExperience.author || 'Anonymous',
+        date: new Date().toISOString()
       };
-
-      // Send to backend
-      await createStory(storyData);
-
-      // Reset form and state
+  
+      const response = await createStory(storyData);
+      
+      // Reset form
       setNewExperience({
         title: '',
         content: '',
@@ -52,10 +51,19 @@ const ShareExperience = ({
         rating: 3,
         author: ''
       });
+      
+      // Close the form
       setShowShareForm(false);
       
-      // Refresh the stories list
-      await fetchStories();
+      // Call the onStoryAdded callback with the new story
+      onStoryAdded({
+        ...response.data,
+        id: response.data.id || Date.now(),
+        likes: 0,
+        isLiked: false,
+        isBookmarked: false,
+        date: new Date().toLocaleDateString()
+      });
     } catch (error) {
       console.error('Error creating story:', error);
       setError('Failed to submit your story. Please try again.');
