@@ -9,6 +9,9 @@ import SearchForm from "../components/SearchForm";
 import MoodCard from "../components/MoodCard";
 import Feature from "../components/Feature";
 import Footer from "../components/Footer";
+import { ItineraryProvider } from '../context/ItineraryContext';
+import ItineraryPlanner from '../components/ItineraryPlanner';
+import ItineraryManager from '../components/ItineraryManager';
 
 const Home = () => {
   const [selectedMood, setSelectedMood] = useState(null);
@@ -64,7 +67,36 @@ const Home = () => {
       </div>
       <div className="flex-1 ml-64 p-6">
         <Hero />
-        <SearchForm />
+
+        <header className="bg-white border-b">
+        <div className="container mx-auto flex items-center justify-between py-4">
+          <div className="flex items-center gap-2">
+            <div className="bg-travel-blue text-white p-1.5 rounded">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-map">
+                <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
+                <line x1="9" x2="9" y1="3" y2="18" />
+                <line x1="15" x2="15" y1="6" y2="21" />
+              </svg>
+            </div>
+         
+          </div>
+          
+         
+        </div>
+      </header>
+      
+      
+      <section id="trip-planner">
+        <ItineraryManager />
+      </section>
+
+      {/* <main>
+        <ItineraryProvider>
+          <ItineraryPlanner />
+        </ItineraryProvider>
+      </main> */}
+      
+        {/* <SearchForm /> */}
         <Feature />
 
         {selectedMood && (
