@@ -18,6 +18,12 @@ const weatherRoutes=require('./routes/WeatherRoute.js')
 const activitiesRoute=require('./routes/activitiesRoute.js')
 const locationRoutes=require('./routes/locationRoute.js')
 
+
+
+
+require('dotenv').config();
+require('./Models/db');
+
 const cron = require('node-cron'); 
 const geminiRoutes = require('./routes/geminiRoutes');
 const movieRoutes = require("./routes/movieRoutes");

@@ -54,8 +54,11 @@ const updateUserProfile = async (req, res) => {
 
         const user = await User.findById(req.user._id);
         if (!user) {
-            return res.status(404).json({ message: "User not found", success: false });
+
+            console.log("User not found in DB");
+            return res.status(403).json({ message: errorMsg, success: false });
         }
+        
 
         // Check if email is being updated and already exists in DB
         if (username && username !== user.username) {
