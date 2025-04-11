@@ -100,7 +100,7 @@ useEffect(() => {
           </button>
           <h1 className="text-3xl font-bold text-center flex-1">AI-Powered Accessibility Assistant</h1>
           <button onClick={() => setHighContrast(!highContrast)} className="p-2 rounded-full border border-teal-700">
-            {highContrast ? <FaSun size={20} /> : <FaMoon size={20} />}
+            {/* {highContrast ? <FaSun size={20} /> : <FaMoon size={20} />} */}
           </button>
         </div>
 

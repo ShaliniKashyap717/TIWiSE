@@ -1,5 +1,3 @@
-ItinerarySummary.jsx
-
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -8,7 +6,7 @@ import CarbonFootprint from './CarbonFootprint';
 import { Plane, Train, Car, MapPin, Calendar, DollarSign } from 'lucide-react';
 
 const ItinerarySummary = ({ itinerary, className = '' }) => {
-  // Calculate total days
+
   const totalDays = useMemo(() => {
     try {
       const start = new Date(itinerary.startDate);
@@ -20,8 +18,8 @@ const ItinerarySummary = ({ itinerary, className = '' }) => {
       return 0;
     }
   }, [itinerary.startDate, itinerary.endDate]);
+
   
-  // Format date range
   const dateRange = useMemo(() => {
     try {
       const start = new Date(itinerary.startDate);
@@ -31,19 +29,12 @@ const ItinerarySummary = ({ itinerary, className = '' }) => {
       return 'Invalid date range';
     }
   }, [itinerary.startDate, itinerary.endDate]);
-  
-  // Calculate total activities
+
+
   const totalActivities = useMemo(() => {
     return itinerary.days.reduce((sum, day) => sum + day.activities.length, 0);
   }, [itinerary.days]);
-  
-  // Transportation icons
-  const transportationIcons = {
-    plane: <Plane className="h-5 w-5" />,
-    train: <Train className="h-5 w-5" />,
-    car: <Car className="h-5 w-5" />
-  };
-  
+
   return (
     <Card className={className}>
       <CardHeader>
@@ -56,7 +47,7 @@ const ItinerarySummary = ({ itinerary, className = '' }) => {
           {dateRange} ({totalDays} days)
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent className="space-y-6">
         {/* Budget summary */}
         <div>
@@ -95,8 +86,8 @@ const ItinerarySummary = ({ itinerary, className = '' }) => {
             </div>
           </div>
         </div>
-        
-        {/* Trip stats */}
+
+     
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-primary/10 rounded-lg p-3 text-center">
             <div className="text-2xl font-semibold">{totalDays}</div>
@@ -115,7 +106,7 @@ const ItinerarySummary = ({ itinerary, className = '' }) => {
             <div className="text-xs text-muted-foreground">Transportations</div>
           </div>
         </div>
-        
+
         {/* Preferences */}
         <div>
           <h3 className="text-md font-medium mb-2">Travel Preferences</h3>
@@ -130,7 +121,7 @@ const ItinerarySummary = ({ itinerary, className = '' }) => {
             </div>
           </div>
         </div>
-        
+
         {/* Carbon footprint */}
         <CarbonFootprint footprint={itinerary.totalCarbonFootprint} showDetailed />
       </CardContent>

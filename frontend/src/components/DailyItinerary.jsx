@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
-import { useItinerary } from '@/contexts/ItineraryContext';
-import ActivityItem from './ActivityItem';
+import { useItinerary } from '@/context/ItineraryContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, CloudSun } from 'lucide-react';
+import ActivityItem from './ActivityItem';
 import { getWeatherForecast } from '@/services/api';
 
 const DailyItinerary = ({ day, onAddActivity }) => {
@@ -27,6 +27,7 @@ const DailyItinerary = ({ day, onAddActivity }) => {
     }
   })();
 
+
   const checkWeather = async () => {
     if (day.activities.length === 0) return;
 
@@ -45,6 +46,7 @@ const DailyItinerary = ({ day, onAddActivity }) => {
       setIsWeatherLoading(false);
     }
   };
+
 
   const renderWeather = () => {
     if (isWeatherLoading) {
@@ -109,9 +111,7 @@ const DailyItinerary = ({ day, onAddActivity }) => {
           </div>
         ) : (
           <div className="text-center py-8 bg-teal-50/50 rounded-lg border border-dashed border-teal-200">
-            <p className="text-teal-600 mb-4">
-              No activities planned for this day yet.
-            </p>
+            <p className="text-teal-600 mb-4">No activities planned for this day yet.</p>
           </div>
         )}
 
